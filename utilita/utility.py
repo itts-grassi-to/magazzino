@@ -8,7 +8,8 @@ class DB:
         self.__user = "dortu"
         self.__psw="ortu"
         self.data = {}
-
+    def _connect(self):
+        self.__connect()
     def __connect(self):
         print(f"Connecting to database: {self.db_name}")
         try:
