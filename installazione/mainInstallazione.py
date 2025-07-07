@@ -13,11 +13,11 @@ project_root = os.path.dirname(current_dir)
 
 # Costruisci il percorso completo della cartella che contiene 'nome_modulo.py'
 target_module_dir = os.path.join(project_root, 'utilita')
-
 # Aggiungi questa directory al sys.path
 sys.path.append(target_module_dir)
 
-import installazione as inst
+
+#import installazione as inst
 import tkinter as tk
 import tkinter.messagebox as messagebox
 from tkinter import ttk
@@ -25,22 +25,28 @@ from tkinter import scrolledtext
 import datetime
 
 import utility as db
+import globali as gb
+import hashlib
 
-class Main(db.DB):
+class Main():
     def __avviaInstallazione(self):
         try:
             print("Starting installation...")
-            self.__incPB=self.__progressbar['maximum']/3
+            self.__incPB=self.__progressbar['maximum']/5
 
-
-            self._connect()
-            if not self.connection or not self.connection.is_connected():
-                print("No active connection to execute query")
-                return None
-            self.__cursor = self.connection.cursor()
-            
-            self.__creaTabella("ruolo",self.__creaTabellaRuoli() )
-            self.__creaTabella("utenti",self.__creaTabellaUtenti() )
+            self.__msgTxt("Creo tabella ruoli")
+            obj=db.DB_ruoli()
+            obj._creaTabellaRuoli()
+            self.__progressbar['value']+= self.__incPB
+            self.__msgTxt("Inserisco i ruoli di base")
+            t=obj._inserisciRuolo(1,"AMMINISTRATORE")
+            if t!="":
+                self.__msgTxt("Errore durante l'inserimento del ruolo AMMINISTRATORE: "+t)
+                return
+            self.__msgTxt("Creo tabella utenti")
+            #self._creaTabella(0,"utenti",self.__creaTabellaUtenti() )
+            self.__msgTxt("Inserisco utente admin")
+            #self._creaTabella(1,"utenti",self.__inserisciUtenteAdmin())
             
             self.__progressbar['value'] = 100
             self.__msgTxt("Installazione completata con successo.")
@@ -52,7 +58,6 @@ class Main(db.DB):
             messagebox.showerror("Errore", f"Si è verificato un errore durante l'installazione: {e}")
         finally:
             self.__progressbar.stop()
-            self.connection.close()
             #self.__root.quit()
     def __init__(self):
         super().__init__()
@@ -87,12 +92,12 @@ class Main(db.DB):
         self.__txtLog = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=60, height=15,
                                       font=("Arial", 10), bd=2, relief=tk.GROOVE)
         self.__txtLog.grid(row=2, column=0, padx=5, pady=5, sticky='NSEW')
-    def __creaTabella(self,nomeTB,q):
-            self.__msgTxt("Creo tabella "+nomeTB)
-            self.__cursor.execute(q)
-            self.connection.commit()
-            self.__msgTxt(f"Tabella {nomeTB} creata con successo.")
-            self.__progressbar['value'] += self.__incPB
+    def __inserisciRuoliBase(self):
+        r = "INSERT INTO `tbRuolo` (`idRuolo`, `descrizione`) VALUES "
+        for rl in gb.ruoli:
+            r += f"({gb.ruoli[rl]}, '{rl}'), "
+        r = r[:-2] + ";"
+        return r
     def __creaTabellaUtenti(self):
         return " \
                     CREATE TABLE IF NOT EXISTS `tbUtenti` ( \
@@ -108,14 +113,11 @@ class Main(db.DB):
                     CONSTRAINT `fk_tbUtenti_1` FOREIGN KEY (`fkRuolo`) REFERENCES `tbRuolo` (`idRuolo`) ON DELETE NO ACTION ON UPDATE NO ACTION\
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;\
                 "
-    def __creaTabellaRuoli(self):
-        return \
-            "CREATE TABLE IF NOT EXISTS `tbRuolo` ( \
-            `idRuolo` int(11) NOT NULL AUTO_INCREMENT, \
-            `descrizione` varchar(20) DEFAULT NULL, \
-            PRIMARY KEY (`idRuolo`) \
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; \
-            "  
+    def __inserisciUtenteAdmin(self):
+        r = "INSERT INTO `tbUtenti` ( `nome`, `cognome`, `user`, `password`, `fkRuolo`) VALUES  \
+            ('Amministratore', 'Sistema','admin', '"+hashlib.md5("ortu".encode()).hexdigest()+"', 1);"
+        print(r)
+        return r
     def __msgTxt(self,msg):
         self.__txtLog.insert(tk.END, datetime.datetime.now().strftime("%H:%M:%S")+": "+msg+"\n")
         self.__txtLog.see(tk.END)
