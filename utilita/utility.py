@@ -1,7 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
 
-    
 
 class DB:
     def __init__(self):
@@ -11,7 +10,7 @@ class DB:
         self.__psw="ortu"
         self.data = {}
     def __connect(self):
-        print(f"Connecting to database: {self.db_name}")
+        #print(f"Connecting to database: {self.db_name}")
         try:
             self.connection = mysql.connector.connect(
                 host=self.__host,
@@ -28,12 +27,13 @@ class DB:
             self.connection = None
             return f"Error while connecting to MySQL: {e}"
     def __disconnect(self):
-        print(f"Disconnecting from database: {self.db_name}")
+        #print(f"Disconnecting from database: {self.db_name}")
         if self.connection.is_connected():
             self.connection.close()
-            print("Disconnected successfully")
+            #print("Disconnected successfully")
         else:
-            print("No active connection to disconnect")
+            #print("No active connection to disconnect")
+            pass
     def _execute(self, query):
         #print(f"Executing query: {query}")
         r=self.__connect()
@@ -59,12 +59,33 @@ class DB:
             r+= f"`{ch}` {campi[ch]}, "
         r = r[:-2]  # Remove the last comma and space
         return r
-    def _creaInsertInto(self, nomeTB, campi):
-        r = f"INSERT INTO `{nomeTB}` ("
-        for ch in campi:
-            r += f"`{ch}`, "
-        r = r[:-2] + ")  "
-        return r
+    def __formataValore(self, v):
+        if isinstance(v, str):
+            return f"'{v}'"
+        elif isinstance(v, int) or isinstance(v, float):
+            return str(v)
+        elif v is None:
+            return "NULL"
+        else:
+            raise ValueError(f"Unsupported value type: {type(v)}")
+    def _creaInsertInto(self, nomeTB, dati):
+        ins_to = f"INSERT INTO `{nomeTB}` ("
+        valori = f"VALUES ("
+        on_dup = f"ON DUPLICATE KEY UPDATE "
+        for ch in dati:
+            if dati is not None:
+                ins_to += f"`{ch}`, "
+                valori += self.__formataValore(dati[ch]) + ", "
+                on_dup += f"`{ch}`={self.__formataValore(dati[ch])}, "
+        ins_to = ins_to[:-2] + ")  "
+        valori = valori[:-2] + ")"
+        on_dup = on_dup[:-2] + ";"
+        return ins_to + valori + " " + on_dup
+    def _creaFK(self, i,nomeTB, nomeFK, nomeTB_FK,nomePK_FK):
+        return f" \
+            CONSTRAINT `fk_{nomeTB}_{i}` \
+                FOREIGN KEY (`{nomeFK}`) \
+                    REFERENCES `{nomeTB_FK}` (`{nomePK_FK}`) ON DELETE NO ACTION ON UPDATE NO ACTION"
     def test(self):
         return self.__connect()
         if r==none:
@@ -72,38 +93,8 @@ class DB:
         else:
             print("Connection successful")
             self.__.disconnect()         
+    
 #***********************************DB_ruoli
-class DB_ruoli(DB):
-    def __init__(self):
-        super().__init__()
-        self.__nomeTB = "tbRuolo"
-        self.__nomePK = "idRuolo"
-        self.__campi = {
-            self.__nomePK:"int(11) NOT NULL AUTO_INCREMENT", 
-            "descrizione":"varchar(20) DEFAULT NULL"
-        }
-        self.__ruoliBase = {
-            "AMMINISTRATORE": 1,
-            "OPERATORE": 100,
-            "VISUALIZZATORE": 100
-        }
-    def _inserisciRuolo(self, id,ruolo):
-        q = f"{self._creaInsertInto(self.__nomeTB,self.__campi)} values({id}, '{ruolo}') \
-        ON DUPLICATE KEY UPDATE `descrizione`='{ruolo}';"
-        return self._execute(q)
-    def __creaOrUpdateRuolo(self, id, ruolo):
-        q = f"ON DUPLICATE KEY UPDATE `descrizione`='{ruolo}';"
-        return q
-
-    def _creaTabellaRuoli(self):
-        q = \
-            f"CREATE TABLE IF NOT EXISTS `tbRuolo` ( \
-             {self._creaCampi(self.__campi)}, \
-            PRIMARY KEY (`{self.__nomePK}`) \
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; \
-            "  
-        #print(q)
-        return self._execute(q)
 
 #DB().test()
 

@@ -24,7 +24,9 @@ from tkinter import ttk
 from tkinter import scrolledtext 
 import datetime
 
-import utility as db
+#import utility as db
+import dbRuoli as dbr
+import dbUtenti as dbu
 import globali as gb
 import hashlib
 
@@ -34,20 +36,34 @@ class Main():
             print("Starting installation...")
             self.__incPB=self.__progressbar['maximum']/5
 
+            
+            #************************************************************************************** tabella ruoli
             self.__msgTxt("Creo tabella ruoli")
-            obj=db.DB_ruoli()
-            obj._creaTabellaRuoli()
+            obj=dbr.DB_ruoli()
+            t = obj._creaTabellaRuoli()
+            if t!="":
+                self.__msgTxt("Errore durante la creazione della tabella ruoli: "+t)
+                return
             self.__progressbar['value']+= self.__incPB
             self.__msgTxt("Inserisco i ruoli di base")
-            t=obj._inserisciRuolo(1,"AMMINISTRATORE")
+            t=obj._inserisciRuoliBase()
             if t!="":
                 self.__msgTxt("Errore durante l'inserimento del ruolo AMMINISTRATORE: "+t)
-                return
+                return            
+            #************************************************************************************** tabella utenti
             self.__msgTxt("Creo tabella utenti")
-            #self._creaTabella(0,"utenti",self.__creaTabellaUtenti() )
+            obj=dbu.DB_utenti()
+            t = obj._creaTabellaUtenti()
+            if t!="":
+                self.__msgTxt("Errore durante la creazione della tabella utenti: "+t)
+                return
+            self.__progressbar['value']+= self.__incPB
             self.__msgTxt("Inserisco utente admin")
-            #self._creaTabella(1,"utenti",self.__inserisciUtenteAdmin())
-            
+            t=obj._inserisciUtente("Amministratore", "Sistema", "admin", hashlib.md5("ortu".encode()).hexdigest(), 1,1)
+            if t!="":
+                self.__msgTxt("Errore durante l'inserimento dell'utente AMMINISTRATORE: "+t)
+                return
+            #************************************************************************************** fine
             self.__progressbar['value'] = 100
             self.__msgTxt("Installazione completata con successo.")
             self.__msgTxt("**************************************\n\n")
@@ -92,32 +108,6 @@ class Main():
         self.__txtLog = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=60, height=15,
                                       font=("Arial", 10), bd=2, relief=tk.GROOVE)
         self.__txtLog.grid(row=2, column=0, padx=5, pady=5, sticky='NSEW')
-    def __inserisciRuoliBase(self):
-        r = "INSERT INTO `tbRuolo` (`idRuolo`, `descrizione`) VALUES "
-        for rl in gb.ruoli:
-            r += f"({gb.ruoli[rl]}, '{rl}'), "
-        r = r[:-2] + ";"
-        return r
-    def __creaTabellaUtenti(self):
-        return " \
-                    CREATE TABLE IF NOT EXISTS `tbUtenti` ( \
-                    `idtbUtenti` int(11) NOT NULL AUTO_INCREMENT,\
-                    `nome` varchar(100) NOT NULL,\
-                    `cognome` varchar(100) NOT NULL,\
-                    `budge` varchar(45) DEFAULT NULL,\
-                    `user` varchar(45) NOT NULL,\
-                    `password` char(32) NOT NULL,\
-                    `fkRuolo` int(11) NOT NULL,\
-                    PRIMARY KEY (`idtbUtenti`),\
-                    KEY `fk_tbUtenti_1_idx` (`fkRuolo`),\
-                    CONSTRAINT `fk_tbUtenti_1` FOREIGN KEY (`fkRuolo`) REFERENCES `tbRuolo` (`idRuolo`) ON DELETE NO ACTION ON UPDATE NO ACTION\
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;\
-                "
-    def __inserisciUtenteAdmin(self):
-        r = "INSERT INTO `tbUtenti` ( `nome`, `cognome`, `user`, `password`, `fkRuolo`) VALUES  \
-            ('Amministratore', 'Sistema','admin', '"+hashlib.md5("ortu".encode()).hexdigest()+"', 1);"
-        print(r)
-        return r
     def __msgTxt(self,msg):
         self.__txtLog.insert(tk.END, datetime.datetime.now().strftime("%H:%M:%S")+": "+msg+"\n")
         self.__txtLog.see(tk.END)
