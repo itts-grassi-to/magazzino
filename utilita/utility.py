@@ -53,6 +53,30 @@ class DB:
             return f"Error executing query: {e}"
         finally:
             self.__disconnect() 
+    def _executeDML(self, query):
+        #print(f"Executing query: {query}")
+        dict_cursor = None
+        records={}
+        r=self.__connect()
+        if not self.connection or not self.connection.is_connected():
+            #print("No active connection to execute query")
+            #return "No active connection to execute query"
+            return r
+        
+        try:
+            dict_cursor = self.connection.cursor(dictionary=True)
+            dict_cursor.execute(query)
+            records=dict_cursor.fetchall()
+            #print("Query executed successfully")
+            return records
+        except Error as e:
+            #print(f"Error executing query: {e}")
+            print(query)
+            return f"Error executing query: {e}"
+        finally:
+            if dict_cursor:
+                dict_cursor.close()
+            self.__disconnect() 
     def _creaCampi(self, campi):
         r=""
         for ch in campi:
