@@ -1,1 +1,7 @@
-ruoli = { 'AMMINISTRATORE':1, 'OPERATORE':100, 'VISITATORE':1000 }
+logato = { }
+ruoli = {
+            "AMMINISTRATORE": 1,
+            "OPERATORE": 100,
+            "VISUALIZZATORE": 1000
+        }
+

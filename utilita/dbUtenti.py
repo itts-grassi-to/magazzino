@@ -1,6 +1,8 @@
+import globali as g
 import utility as db
 import dbRuoli
 import hashlib
+
 
 class DB_utenti(db.DB):
     def __init__(self):
@@ -36,6 +38,8 @@ class DB_utenti(db.DB):
             return False
         if rec[0][self.__nomeCampi[4]] == user and rec[0][self.__nomeCampi[5]] == hashlib.md5(password.encode()).hexdigest():
             #print("Utente autorizzato")
+            g.logato['NOME'] = rec[0][self.__nomeCampi[1]]+" "+rec[0][self.__nomeCampi[2]]
+            g.logato['RUOLO'] = rec[0][self.__nomeCampi[6]]
             return True
         else:
             #print("Utente non autorizzato")
