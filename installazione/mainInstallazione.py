@@ -63,6 +63,7 @@ class Main():
             if t!="":
                 self.__msgTxt("Errore durante l'inserimento dell'utente AMMINISTRATORE: "+t)
                 return
+            #************************************************************************************** tabella prodotto
             #************************************************************************************** fine
             self.__progressbar['value'] = 100
             self.__msgTxt("Installazione completata con successo.")
