@@ -27,6 +27,8 @@ import datetime
 #import utility as db
 import dbRuoli as dbr
 import dbUtenti as dbu
+import dbCategorie as dbc
+import dbProdotti as dbp
 import globali as gb
 import hashlib
 
@@ -34,7 +36,7 @@ class Main():
     def __avviaInstallazione(self):
         try:
             print("Starting installation...")
-            self.__incPB=self.__progressbar['maximum']/5
+            self.__incPB=self.__progressbar['maximum']/6
 
             
             #************************************************************************************** tabella ruoli
@@ -63,7 +65,22 @@ class Main():
             if t!="":
                 self.__msgTxt("Errore durante l'inserimento dell'utente AMMINISTRATORE: "+t)
                 return
-            #************************************************************************************** tabella prodotto
+            #************************************************************************************** tabella categorie
+            self.__msgTxt("Creo tabella categorie")
+            obj=dbc.DB_categorie()
+            t = obj._creaTabellaCategorie()
+            if t!="":
+                self.__msgTxt("Errore durante la creazione della tabella categorie: "+t)
+                return
+            self.__progressbar['value']+= self.__incPB
+            #************************************************************************************** tabella prodotti
+            self.__msgTxt("Creo tabella prodotti")
+            obj=dbp.DB_prodotti()
+            t = obj._creaTabellaProdotti()
+            if t!="":
+                self.__msgTxt("Errore durante la creazione della tabella prodotti: "+t)
+                return
+            self.__progressbar['value']+= self.__incPB
             #************************************************************************************** fine
             self.__progressbar['value'] = 100
             self.__msgTxt("Installazione completata con successo.")

@@ -6,7 +6,7 @@ class DB_ruoli(db.DB):
         self.__nomeCampi = ["idRuolo", "descrizione"]
         self.__campi = {
             self.__nomeCampi[0]:"int(11) NOT NULL AUTO_INCREMENT", 
-            self.__nomeCampi[1]:"varchar(20) DEFAULT NULL"
+            self.__nomeCampi[1]:"varchar(20) not NULL"
         }
         self.__ruoliBase = {
             "AMMINISTRATORE": 1,
