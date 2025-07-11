@@ -31,8 +31,10 @@ import datetime
 import dbRuoli as dbr
 import dbUtenti as dbu
 import dbCategorie as dbc
+import dbSpecifiche as dbs
 import dbProdotti as dbp
 import globali as gb
+
 import hashlib
 
 class Main():
@@ -82,6 +84,14 @@ class Main():
             t = obj._creaTabellaProdotti()
             if t!="":
                 self.__msgTxt("Errore durante la creazione della tabella prodotti: "+t)
+                return
+            self.__progressbar['value']+= self.__incPB
+            #***************************************************************************** tabella specifiche
+            self.__msgTxt("Creo tabella specifiche")
+            obj=dbs.DB_specifiche()
+            t = obj._creaTabellaSpecifiche()
+            if t!="":
+                self.__msgTxt("Errore durante la creazione della tabella specifiche: "+t)
                 return
             self.__progressbar['value']+= self.__incPB
             #************************************************************************************** fine
