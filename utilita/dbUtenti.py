@@ -18,6 +18,8 @@ class DB_utenti(db.DB):
                     self.__nomeCampi[5]: "char(32) NOT NULL",\
                     self.__nomeCampi[6]: "int(11) NOT NULL",\
        }
+    def getNomeTB(self):
+        return self.__nomeTB
     def getPK(self):
         return self.__nomeCampi[0]
     def getFK(self):
