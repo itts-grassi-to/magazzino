@@ -1,4 +1,7 @@
 # mainInstallazione.py
+# creato by Daniele Ortu
+# daniele.ortu@itisgrassi.edu.it
+
 import sys
 import os
 
