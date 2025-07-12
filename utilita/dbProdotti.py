@@ -41,5 +41,5 @@ class DB_prodotti(db.DB):
                 REFERENCES `{ut.getNomeTB()}` (`{ut.getPK()}`) ON DELETE NO ACTION ON UPDATE NO ACTION \
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; \
             "  
-        print(q)
+        #print(q)
         return self._execute(q)
