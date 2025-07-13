@@ -18,6 +18,15 @@ class DB_prodotti(db.DB):
         return self.__nomeTB
     def getPK(self):
         return self.__nomeCampi[0]
+    
+    def getMaxCB(self):
+        try:
+            q=F"SELECT max({self.__nomeCampi[1]}) as cbmax FROM {self.__nomeTB}"
+            r = self._executeDML(q)
+            return False,'00000000000000' if r[0]['cbmax']==None else r[0]['cbmax']
+            #print(f"risultato cb={r}")
+        except:
+            return True,r
     def inserisciCategoria(self, descrizione,PK=None):
         dati={
                 self.__nomeCampi[0]: PK, 
@@ -25,7 +34,6 @@ class DB_prodotti(db.DB):
             }
         q = self._creaInsertInto(self.__nomeTB,dati)
         return self._execute(q)
-    
     def _creaTabellaProdotti(self):
         ut=dbu.DB_utenti()
         cat=dbc.DB_categorie()
