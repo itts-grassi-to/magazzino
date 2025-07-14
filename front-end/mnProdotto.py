@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk 
 import tkinter.messagebox as msg
 import os
 
@@ -13,6 +14,7 @@ if target_module_dir not in os.sys.path:
 
 import dbProdotti as dbp
 import codice_barre as ucb
+import mnCategoria as mnc
 class Prodotto:
     def __init__(self,ini):
         self._root = tk.Tk()
@@ -25,10 +27,18 @@ class ProdottoNuovo(Prodotto):
     def __on_click_stampa(self):
         self.__objCB.set(self.__valCB.get())
         self.__objCB.genera_code128()
-    def __on_click_nuovo(self):
+    def __on_click_salva(self):
         pass
     def __on_click_esci(self):
         pass
+    def __on_click_categoria(self,event):
+        self.__objCategoria = mnc.VisuCategoria()
+        #self.__objCategoria.root.grab_set()
+        self.__objCategoria.root.transient(self._root)
+        self._root.wait_window(self.__objCategoria.root)
+        ival,sval= self.__objCategoria.getSelezionato()
+        self.__valCategoria["ival"].set(ival)
+        self.__valCategoria["sval"].set(sval)
     def __init__(self):
         w="400"
         h="300"
@@ -40,6 +50,7 @@ class ProdottoNuovo(Prodotto):
         self.__fr2.grid(column=0,row=1,padx=5,pady=5,sticky="NSEW")  
         self.__objCB=ucb.CB()
         self.__objDBP = dbp.DB_prodotti()
+        self.__objCategoria = None
         #************************************************************************************************* codice a barre
         lblCBT = tk.Label(self.__fr1,text="Codice a barre")
         lblCBT.grid(column=0,row=0,padx=5,pady=5)
@@ -62,8 +73,15 @@ class ProdottoNuovo(Prodotto):
         self.__valSigla = tk.StringVar()
         txtCB = tk.Entry(self.__fr1,width=16,textvariable=self.__valSigla, justify=tk.LEFT)
         txtCB.grid(column=1,row=1,pady=5)
+        #************************************************************************************************** categoria
+        self.__valCategoria={"ival":tk.IntVar(),"sval":tk.StringVar()}
+        self.__valCategoria["ival"].set(-1)
+        self.__valCategoria["sval"].set("Clicca qui ...")
+        txtCategoria = tk.Entry(self.__fr1,width=16,textvariable=self.__valCategoria["sval"],state="readonly",justify=tk.CENTER)
+        txtCategoria.grid(column=0,row=2,pady=5,columnspan=2,sticky="EW")
+        txtCategoria.bind("<Button-1>", self.__on_click_categoria)
         #************************************************************************************************* pulsantiera
-        btSalva = tk.Button(self.__fr2,text="Nuovo",command=self.__on_click_nuovo)
+        btSalva = tk.Button(self.__fr2,text="Salva",command=self.__on_click_salva)
         btSalva.grid(column=0,row=0,padx=5,pady=5)
         btEsci = tk.Button(self.__fr2,text="Esci",command=self.__on_click_esci)
         btEsci.grid(column=1,row=0,padx=5,pady=5)
