@@ -12,6 +12,8 @@ class DB_categorie(db.DB):
         return self.__nomeTB
     def getPK(self):
         return self.__nomeCampi[0]
+    def getCampo(self,i):
+        return self.__nomeCampi[i]
     def inserisciCategoria(self, descrizione,PK=None):
         dati={
                 self.__nomeCampi[0]: PK, 
@@ -20,6 +22,11 @@ class DB_categorie(db.DB):
         q = self._creaInsertInto(self.__nomeTB,dati)
         return self._execute(q)
     
+    def getCategorie(self):
+        q = f"SELECT * FROM {self.__nomeTB} "
+        q+= f" ORDER BY {self.__nomeCampi[1]}"
+        r = self._executeDML(q)
+        return r
     def _creaTabellaCategorie(self):
         q = \
             f"CREATE TABLE IF NOT EXISTS `{self.__nomeTB}` ( \
