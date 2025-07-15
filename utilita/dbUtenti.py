@@ -24,6 +24,8 @@ class DB_utenti(db.DB):
         return self.__nomeCampi[0]
     def getFK(self):
         return self.__nomeCampi[6]
+    def getCampo(self,i):
+        return self.__nomeCampi[i]
     def isAutorizzato(self, user, password):
         """
         Controlla se l'utente è autorizzato a accedere al sistema.
@@ -37,15 +39,15 @@ class DB_utenti(db.DB):
         rec = self._executeDML(q)
         #print (rec[0])
         if len(rec)==0:
-            return False
+            return False,rec
         if rec[0][self.__nomeCampi[4]] == user and rec[0][self.__nomeCampi[5]] == hashlib.md5(password.encode()).hexdigest():
             #print("Utente autorizzato")
-            g.logato['NOME'] = rec[0][self.__nomeCampi[1]]+" "+rec[0][self.__nomeCampi[2]]
-            g.logato['RUOLO'] = rec[0][self.__nomeCampi[6]]
-            return True
+            #g.logato['NOME'] = rec[0][self.__nomeCampi[1]]+" "+rec[0][self.__nomeCampi[2]]
+            #g.logato['RUOLO'] = rec[0][self.__nomeCampi[6]]
+            return True, rec[0]
         else:
             #print("Utente non autorizzato")
-            return False
+            return False,rec
     def _inserisciUtente(self, nome, cognome, user, password, fkRuolo, PK=None, budge=None):
         dati = {
             self.__nomeCampi[0]: PK, 

@@ -22,7 +22,7 @@ class VisuCategoria(Categoria):
             msg.showerror("Seleziona","Nessun elemento selezionato!",parent=self.root)
             return
         item_details = self.__treeCategorie.item(selected_items_ids[0])   
-        print(item_details) 
+        # print(item_details) 
         self.__r=item_details["values"]
         self.root.destroy()
         

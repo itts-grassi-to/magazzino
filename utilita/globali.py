@@ -1,4 +1,3 @@
-logato = { }
 ruoli = {
             "AMMINISTRATORE": 1,
             "OPERATORE": 100,

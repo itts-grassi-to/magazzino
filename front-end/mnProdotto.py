@@ -1,27 +1,19 @@
+import globaliFront as gfr
 import tkinter as tk
 from tkinter import ttk 
 import tkinter.messagebox as msg
-import os
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(current_dir)
-target_module_dir = os.path.join(project_root, 'utilita')
-if target_module_dir not in os.sys.path:
-    os.sys.path.append(target_module_dir)
-target_module_dir = os.path.join(project_root, 'img')
-if target_module_dir not in os.sys.path:
-    os.sys.path.append(target_module_dir)
 
 import dbProdotti as dbp
 import codice_barre as ucb
 import mnCategoria as mnc
 class Prodotto:
     def __init__(self,ini):
-        self._root = tk.Tk()
+        self._root = tk.Toplevel()
         self._root.title(ini["titolo"])
         self._root.geometry(ini["dimensioni"])
         self._root.resizable(False, False)
         self._root.grid()
+        self._root.attributes("-topmost",1)
 
 class ProdottoNuovo(Prodotto):
     def __on_click_stampa(self):
@@ -29,10 +21,10 @@ class ProdottoNuovo(Prodotto):
         self.__objCB.genera_code128()
     def __on_click_salva(self):
         if self.__valSigla.get()=="":
-            msg.showerror("Controllo campo","Non hai inserito la sigla del prodotto")
+            msg.showerror("Controllo campo","Non hai inserito la sigla del prodotto",parent=self._root)
             return
         if self.__valCategoria.get()==self.__dummy:
-            self.__showerror("Controllo campo","Non hai inserito il tipo del prodotto")
+            self.__showerror("Controllo campo","Non hai inserito il tipo del prodotto",parent=self._root)
     def __on_click_esci(self):
         pass
     def __on_click_categoria(self,event):
@@ -44,6 +36,7 @@ class ProdottoNuovo(Prodotto):
         self.__valCategoria["ival"].set(ival)
         self.__valCategoria["sval"].set(sval)
     def __init__(self):
+    #def run(self):
         w="400"
         h="300"
         ini = {"id":"NUOVO","titolo":"Nuovo prodotto","dimensioni":w+"x"+h}
@@ -96,7 +89,6 @@ class ProdottoNuovo(Prodotto):
         btEsci = tk.Button(self.__fr2,text="Esci",command=self.__on_click_esci)
         btEsci.grid(column=1,row=0,padx=5,pady=5)
 
-        self._root.mainloop()
     def __getNuovoCB(self):
 
         errore,self.__cb=self.__objDBP.getMaxCB()
@@ -111,7 +103,6 @@ class ProdottoModifica(Prodotto):
         pass
 
 
-
-p=ProdottoNuovo()
-#c=CB("FFFFF")
-#print(c.incrementa_esadecimale_ricorsivo())
+if gfr.SVILUPPO:
+    p=ProdottoNuovo()
+    p._root.mainloop()

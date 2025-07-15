@@ -1,6 +1,12 @@
 import tkinter as tk
 import globali as g
+import mnProdotto as mnp
+
 class Menu:
+    def __on_click_prodotto_nuovo(self):
+        mnp.ProdottoNuovo()
+    def __on_click_prodotto_cerca(self):
+        print("cerca prodotto")
     def __init__(self,parent,ruolo):
         self.__root = parent
         menubar = tk.Menu(self.__root)
@@ -21,9 +27,9 @@ class Menu:
 
         # 3. Creazione del menu "Prodotto"
         help_menu = tk.Menu(self.__menubar, tearoff=0)
-        self.__menubar.add_cascade(label="prodotto", menu=help_menu)
-        help_menu.add_command(label="Nuovo", command=self.__nuovoProdotto)
-        help_menu.add_command(label="cerrca", command="")
+        self.__menubar.add_cascade(label="Prodotto", menu=help_menu)
+        help_menu.add_command(label="Nuovo", command=self.__on_click_prodotto_nuovo)
+        help_menu.add_command(label="Cerca", command=self.__on_click_prodotto_cerca)
         help_menu.add_command(label="Cancella", command="")
         # 3. Creazione del menu "Aiuto"
         help_menu = tk.Menu(self.__menubar, tearoff=0)
@@ -41,8 +47,6 @@ class Menu:
         #print("Apri file")
         #self.__root.focus()
         self.__root.destroy()
-    def __nuovoProdotto(self):
-        print("Nuovo prodotto")
     def __mostra_info(self):
         #messagebox.showinfo("Menu", "Hai cliccato su 'Informazioni'")   
         print("Mostra informazioni")
