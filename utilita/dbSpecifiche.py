@@ -1,8 +1,9 @@
+import globali as gb
 import utility as db
 import dbProdotti as dbp
 class DB_specifiche(db.DB):
     def __init__(self):
-        super().__init__()
+        super().__init__(gb.gdbms)
         self.__nomeTB = "tbSpecifiche"
         self.__nomeCampi = ["idSpecifiche", "descrizione","tipo","visibileA","fkProdotto"]
         self.__campi = {
@@ -25,7 +26,7 @@ class DB_specifiche(db.DB):
                 self.__nomeCampi[4]: fkProdotto
             }
         q = self._creaInsertInto(self.__nomeTB,dati)
-        return self._execute(q)
+        return self._executeDDL(q)
     
     def _creaTabellaSpecifiche(self):
         dp=dbp.DB_prodotti()
@@ -39,4 +40,4 @@ class DB_specifiche(db.DB):
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; \
             "  
         #print(q)
-        return self._execute(q)
+        return self._executeDDL(q)

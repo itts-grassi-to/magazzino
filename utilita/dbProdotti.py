@@ -1,9 +1,10 @@
+import globali as gb
 import utility as db
 import dbCategorie as dbc
 import dbUtenti as dbu
 class DB_prodotti(db.DB):
     def __init__(self):
-        super().__init__()
+        super().__init__(gb.gdbms)
         self.__nomeTB = "tbProdotti"
         self.__nomeCampi = ["idProdotto", "cb","sigla","timestamp","fkCategoria","fkUtente"]
         self.__campi = {
@@ -18,11 +19,12 @@ class DB_prodotti(db.DB):
         return self.__nomeTB
     def getPK(self):
         return self.__nomeCampi[0]
-    
+    def getCampo(self,i):
+        return self.__nomeCampi[i]
     def getMaxCB(self):
         try:
             q=F"SELECT max({self.__nomeCampi[1]}) as cbmax FROM {self.__nomeTB}"
-            r = self._executeDML(q)
+            e,r = self._executeDML(q)
             return False,'00000000000000' if r[0]['cbmax']==None else r[0]['cbmax']
             #print(f"risultato cb={r}")
         except:
@@ -33,7 +35,7 @@ class DB_prodotti(db.DB):
                 self.__nomeCampi[1]: descrizione
             }
         q = self._creaInsertInto(self.__nomeTB,dati)
-        return self._execute(q)
+        return self._executeDDL(q)
     def _creaTabellaProdotti(self):
         ut=dbu.DB_utenti()
         cat=dbc.DB_categorie()
@@ -50,4 +52,4 @@ class DB_prodotti(db.DB):
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; \
             "  
         #print(q)
-        return self._execute(q)
+        return self._executeDDL(q)

@@ -1,3 +1,5 @@
+SVILUPPO = True
+gdbms = {}
 ruoli = {
             "AMMINISTRATORE": 1,
             "OPERATORE": 100,

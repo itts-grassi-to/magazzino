@@ -16,8 +16,8 @@ import dbUtenti as dbu
 import mainFront as mnf
 
 class Main_front_pre():
-    #def __init__(self):
-    def run(self):
+    def __init__(self):
+    #def run(self):
         self.__root = tk.Tk()
         self.__root.title("Magazzino")
         self.__root.geometry("400x300")
@@ -82,13 +82,20 @@ class Main_front_pre():
             return
     def __cmdRegistrazione(self):
         messagebox.showinfo("Lavori in corso.")
-    #def run(self):
-    #    self.__root.mainloop()
+    def run(self):
+        self.__root.mainloop()
 
 
 
 if __name__=="__main__":
-    #print("Starting mainInstallazione.py...")
-    #inst.Installa().installa()
-    m=Main_front_pre()
-    m.run()
+    try:
+        with open('mio_file.bin', 'rb') as f:
+            pass
+        m=Main_front_pre()
+        m.run()
+    except FileNotFoundError:
+       messagebox.showerror("File configurazione","Il file di configurazione non è stato installato.\nRivolgersi all'amministratore")
+    except Exception as e:
+        messagebox.showerror("File configurazione","Il file di configurazione non è stato installato.\nRivolgersi all'amministratore")
+    
+    

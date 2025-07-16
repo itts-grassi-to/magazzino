@@ -1,13 +1,14 @@
 import globali as gb
 import utility as db
-class DB_categorie(db.DB):
+class DB_asset(db.DB):
     def __init__(self):
         super().__init__(gb.gdbms)
-        self.__nomeTB = "tbCategorie"
-        self.__nomeCampi = ["idCategoria", "descrizione"]
+        self.__nomeTB = "tbAsset"
+        self.__nomeCampi = ["idAsset", "sigla","descrizione"]
         self.__campi = {
             self.__nomeCampi[0]:"int(11) NOT NULL AUTO_INCREMENT", 
-            self.__nomeCampi[1]:"varchar(40) not NULL"
+            self.__nomeCampi[1]:"varchar(50) NOT NULL UNIQUE",
+            self.__nomeCampi[2]:"varchar(200) not NULL",
         }
     def getNomeTB(self):
         return self.__nomeTB
@@ -15,19 +16,17 @@ class DB_categorie(db.DB):
         return self.__nomeCampi[0]
     def getCampo(self,i):
         return self.__nomeCampi[i]
-    def inserisciCategoria(self, descrizione,PK=None):
+    def inserisciAsset(self, sigla,descrizione,PK=None):
         dati={
                 self.__nomeCampi[0]: PK, 
-                self.__nomeCampi[1]: descrizione
+                self.__nomeCampi[1]: sigla,
+                self.__nomeCampi[2]: descrizione
             }
         q = self._creaInsertInto(self.__nomeTB,dati)
         return self._executeDDL(q)
     
-    def getCategorie(self):
-        q = f"SELECT * FROM {self.__nomeTB} "
-        q+= f" ORDER BY {self.__nomeCampi[1]}"
-        return self._executeDML(q)
-    def _creaTabellaCategorie(self):
+    def _creaTabellaAsset(self):
+        
         q = \
             f"CREATE TABLE IF NOT EXISTS `{self.__nomeTB}` ( \
              {self._creaCampi(self.__campi)}, \

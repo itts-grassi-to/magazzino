@@ -1,4 +1,4 @@
-import globali as g
+import globali as gb
 import utility as db
 import dbRuoli
 import hashlib
@@ -6,7 +6,7 @@ import hashlib
 
 class DB_utenti(db.DB):
     def __init__(self):
-        super().__init__()
+        super().__init__(gb.gdbms)
         self.__nomeTB = "tbUtenti"
         self.__nomeCampi = ["idtbUtenti", "nome", "cognome", "budge", "user", "password", "fkRuolo"]
         self.__campi = {
@@ -36,7 +36,7 @@ class DB_utenti(db.DB):
         #password=hashlib.md5(password.encode()).hexdigest()
         q = f"SELECT *  FROM {self.__nomeTB} \
             WHERE {self.__nomeCampi[4]}='{user}' AND {self.__nomeCampi[5]}='{hashlib.md5(password.encode()).hexdigest()}';"
-        rec = self._executeDML(q)
+        e, rec = self._executeDML(q)
         #print (rec[0])
         if len(rec)==0:
             return False,rec
@@ -60,7 +60,7 @@ class DB_utenti(db.DB):
         }
 
         q = self._creaInsertInto(self.__nomeTB,dati)
-        return self._execute(q)
+        return self._executeDDL(q)
     def _creaTabellaUtenti(self):
         dbr = dbRuoli.DB_ruoli()
         q = f"\
@@ -71,4 +71,4 @@ class DB_utenti(db.DB):
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; \
             "
         #print(q)
-        return self._execute(q)
+        return self._executeDDL(q)

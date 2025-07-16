@@ -1,7 +1,8 @@
+import globali as gb
 import utility as db
 class DB_ruoli(db.DB):
     def __init__(self):
-        super().__init__()
+        super().__init__(gb.gdbms)
         self.__nomeTB = "tbRuolo"
         self.__nomeCampi = ["idRuolo", "descrizione"]
         self.__campi = {
@@ -38,7 +39,7 @@ class DB_ruoli(db.DB):
         return ""
     def _inserisciRuolo(self, dati):
         q = self._creaInsertInto(self.__nomeTB,dati)
-        return self._execute(q)
+        return self._executeDDL(q)
     
     def _creaTabellaRuoli(self):
         q = \
@@ -48,4 +49,4 @@ class DB_ruoli(db.DB):
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; \
             "  
         #print(q)
-        return self._execute(q)
+        return self._executeDDL(q)

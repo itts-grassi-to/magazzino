@@ -3,13 +3,34 @@ from mysql.connector import Error
 
 
 class DB:
-    def __init__(self):
-        self.__host="192.168.1.117"
-        self.db_name = "magazzino"
-        self.__user = "dortu"
-        self.__psw="ortu"
+    def __init__(self,p):
+        self.__host = p["host"] #"192.168.1.117"
+        self.db_name = p["nome_schema"] #"magazzino"
+        self.__user = p["user"] #"dortu"
+        self.__psw = p["password"] #"ortu"
         self.data = {}
+    
+    def connect(self):
+        return self.__connect()
     def __connect(self):
+        # da valorizzare i parametri
+        try:
+            self.connection = mysql.connector.connect(
+                host=self.__host,
+                database=self.db_name,
+                user=self.__user,
+                password=self.__psw
+            )
+            if self.connection.is_connected():
+                self.__cursor = self.connection.cursor()
+                #print("Connection successful")
+                return "Connection successful"
+        except Error as e:
+            #print(f"Error while connecting to MySQL: {e}")
+            self.connection = None
+            return f"Error while connecting to MySQL: {e}"
+    '''
+    def __connecto(self):
         #print(f"Connecting to database: {self.db_name}")
         try:
             self.connection = mysql.connector.connect(
@@ -26,6 +47,7 @@ class DB:
             #print(f"Error while connecting to MySQL: {e}")
             self.connection = None
             return f"Error while connecting to MySQL: {e}"
+    '''
     def __disconnect(self):
         #print(f"Disconnecting from database: {self.db_name}")
         if self.connection.is_connected():
@@ -34,23 +56,23 @@ class DB:
         else:
             #print("No active connection to disconnect")
             pass
-    def _execute(self, query):
+    def _executeDDL(self, query):
         #print(f"Executing query: {query}")
         r=self.__connect()
         if not self.connection or not self.connection.is_connected():
             #print("No active connection to execute query")
             #return "No active connection to execute query"
-            return r
+            return True, r
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
             self.connection.commit()
             #print("Query executed successfully")
-            return ""
+            return False,"Query eseguita con successo"
         except Error as e:
             #print(f"Error executing query: {e}")
             print(query)
-            return f"Error executing query: {e}"
+            return True,f"Error executing query: {e}"
         finally:
             self.__disconnect() 
     def _executeDML(self, query):
@@ -61,18 +83,18 @@ class DB:
         if not self.connection or not self.connection.is_connected():
             #print("No active connection to execute query")
             #return "No active connection to execute query"
-            return r
+            return True,r
         
         try:
             dict_cursor = self.connection.cursor(dictionary=True)
             dict_cursor.execute(query)
             records=dict_cursor.fetchall()
             #print("Query executed successfully")
-            return records
+            return False,records
         except Error as e:
             #print(f"Error executing query: {e}")
             print(query)
-            return f"Error executing query: {e}"
+            return True, f"Error executing query: {e}"
         finally:
             if dict_cursor:
                 dict_cursor.close()
@@ -110,7 +132,7 @@ class DB:
             CONSTRAINT `fk_{nomeTB}_{i}` \
                 FOREIGN KEY (`{nomeFK}`) \
                     REFERENCES `{nomeTB_FK}` (`{nomePK_FK}`) ON DELETE NO ACTION ON UPDATE NO ACTION"
-    def test(self):
+    def getSchemi(self):
         return self.__connect()
         if r==none:
             print("Connection failed")
