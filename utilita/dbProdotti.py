@@ -6,14 +6,16 @@ class DB_prodotti(db.DB):
     def __init__(self):
         super().__init__(gb.gdbms)
         self.__nomeTB = "tbProdotti"
-        self.__nomeCampi = ["idProdotto", "cb","sigla","timestamp","fkCategoria","fkUtente"]
+        self.__nomeCampi = ["idProdotto", "cb","sigla","timestamp","fkCategoria","fkUtente","quantita","um"]
         self.__campi = {
             self.__nomeCampi[0]:"int(11) NOT NULL AUTO_INCREMENT", 
             self.__nomeCampi[1]:"char(15) unique default '000000000000000'",
             self.__nomeCampi[2]:"varchar(40) not NULL",
             self.__nomeCampi[3]:"timestamp NULL DEFAULT current_timestamp()",
             self.__nomeCampi[4]:"int(11) not null",
-            self.__nomeCampi[5]:"int(11) not null"
+            self.__nomeCampi[5]:"int(11) not null",
+            self.__nomeCampi[6]:"float not null",
+            self.__nomeCampi[7]:"varchar(5)  not null",
         }
     def getNomeTB(self):
         return self.__nomeTB
