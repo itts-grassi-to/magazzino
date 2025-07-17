@@ -20,7 +20,7 @@ class VisuCategoria(Categoria):
         selected_items_ids = self.__treeCategorie.selection()
         if not selected_items_ids:
             msg.showerror("Seleziona","Nessun elemento selezionato!",parent=self.root)
-            return
+            return -1,""
         item_details = self.__treeCategorie.item(selected_items_ids[0])   
         # print(item_details) 
         self.__r=item_details["values"]
@@ -34,7 +34,7 @@ class VisuCategoria(Categoria):
         ini = {"id":"Visualizza","titolo":"Visualizza categoria","dimensioni":w+"x"+h}
         super().__init__(ini)
         self.__obyCategorie= dbc.DB_categorie()
-        self.__r=[]
+        self.__r=[-1,""]
         #******************************************************* cerca
         self.__valCerca=tk.StringVar()
         txtCerca=tk.Entry(self.root,textvariable=self.__valCerca)
@@ -56,7 +56,9 @@ class VisuCategoria(Categoria):
         self.__treeCategorie.heading("col2", text="DESCRIZIONE")
         self.__treeCategorie.column("col1", width=40)
         self.__treeCategorie.column("col2", width=300)
-        self.__valCategorie=self.__obyCategorie.getCategorie()
+        e,self.__valCategorie=self.__obyCategorie.getCategorie()
+        if e:
+            msg.showerror("Categorie","Errore nella lettura delle categorie.\nContattare l'amministratore")
         i=0
         while i<len(self.__valCategorie):
             self.__treeCategorie.insert("","end",

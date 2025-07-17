@@ -52,7 +52,7 @@ class Main():
             #print("Starting installation...")
             self.__msgTxt("Avvio installazione ...")
             self.__incPB=self.__progressbar['maximum']/8
-            if not self.__possoProseguire():
+            if not self.__creaConfigurazione():
                 return
             
             #************************************************************************************** tabella ruoli
@@ -85,6 +85,10 @@ class Main():
             self.__msgTxt("Creo tabella categorie")
             obj=dbc.DB_categorie()
             e,msg = obj._creaTabellaCategorie()
+            if e:
+                self.__msgTxt(msg)
+                return
+            e,msg=obj._inserisciCategorieBase()
             if e:
                 self.__msgTxt(msg)
                 return
@@ -210,21 +214,23 @@ class Main():
         self.__txtLog.see(tk.END)
     def __creaConfigurazione(self):
         if not self.__possoProseguire():
-            return
+            return False
         file_name= gb.gdbms["dir"]+"/"+gb.gdbms["nome_FC"]
         try:
             with open(file_name, 'wb') as f:
                 pickle.dump(gb.gdbms, f)
             print(f"Dizionario salvato con successo in '{file_name}'")
+            return True
         except Exception as e:
             print(f"Errore durante il salvataggio: {e}")    
+            return False
     def run(self):
         self.__root.mainloop()    
     def __possoProseguire(self):
 
         gb.gdbms={
             "host": self.valIndirizzo.get(),
-            "nome_schema": "magazzino",
+            "nome_schema": "inventario",
             "user": self.valUser.get(),
             "password": self.valPassword.get(),
             "dir": self.__valSelDir.get(),

@@ -1,5 +1,5 @@
 
-SVILUPPO=False
+SVILUPPO=True
 logato = { }
 if SVILUPPO:
     import os

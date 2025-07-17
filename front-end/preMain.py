@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
 import os
+import pickle
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_dir)
@@ -12,6 +13,7 @@ if target_module_dir not in os.sys.path:
     os.sys.path.append(target_module_dir)
 
 import globaliFront as g
+import globali as gb
 import dbUtenti as dbu
 import mainFront as mnf
 
@@ -78,7 +80,7 @@ class Main_front_pre():
             #main_window.run()
             #messagebox.showinfo("Login eseguito","Login eseguito con successo.")
         else:
-            messagebox.showerror("Errore", "User e/o password errati.")
+            messagebox.showerror("Errore", dati)
             return
     def __cmdRegistrazione(self):
         messagebox.showinfo("Lavori in corso.")
@@ -89,8 +91,8 @@ class Main_front_pre():
 
 if __name__=="__main__":
     try:
-        with open('mio_file.bin', 'rb') as f:
-            pass
+        with open('config', 'rb') as f:
+            gb.gdbms=loaded_dictionary = pickle.load(f)
         m=Main_front_pre()
         m.run()
     except FileNotFoundError:

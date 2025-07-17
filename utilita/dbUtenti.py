@@ -38,8 +38,10 @@ class DB_utenti(db.DB):
             WHERE {self.__nomeCampi[4]}='{user}' AND {self.__nomeCampi[5]}='{hashlib.md5(password.encode()).hexdigest()}';"
         e, rec = self._executeDML(q)
         #print (rec[0])
-        if len(rec)==0:
+        if e:
             return False,rec
+        if len(rec)==0:
+            return False,"Utente o password eraati"
         if rec[0][self.__nomeCampi[4]] == user and rec[0][self.__nomeCampi[5]] == hashlib.md5(password.encode()).hexdigest():
             #print("Utente autorizzato")
             #g.logato['NOME'] = rec[0][self.__nomeCampi[1]]+" "+rec[0][self.__nomeCampi[2]]

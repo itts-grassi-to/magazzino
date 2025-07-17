@@ -21,22 +21,22 @@ class DB_ruoli(db.DB):
     def _inserisciRuoliBase(self):
         
         dati={self.__nomeCampi[0]:1, self.__nomeCampi[1]:"AMMINISTRATORE"}
-        r=self._inserisciRuolo(dati)
-        if r:
+        e,r=self._inserisciRuolo(dati)
+        if e:
             print(f"Error inserting role: {r}")
-            return r
+            return e,r
         dati={self.__nomeCampi[0]:100, self.__nomeCampi[1]:"OPERATORE"}
-        r= self._inserisciRuolo(dati)
-        if r:
+        e,r= self._inserisciRuolo(dati)
+        if e:
             print(f"Error inserting role: {r}")
-            return r
+            return e,r
         dati={self.__nomeCampi[0]:1000, self.__nomeCampi[1]:"VISUALIZZATORE"}
-        r=self._inserisciRuolo(dati)
-        if r:
+        e,r=self._inserisciRuolo(dati)
+        if e:
             print(f"Error inserting role: {r}")
-            return r
-        
-        return ""
+            return e,r
+        return False,""
+    
     def _inserisciRuolo(self, dati):
         q = self._creaInsertInto(self.__nomeTB,dati)
         return self._executeDDL(q)

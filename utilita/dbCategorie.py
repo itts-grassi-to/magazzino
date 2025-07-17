@@ -15,6 +15,20 @@ class DB_categorie(db.DB):
         return self.__nomeCampi[0]
     def getCampo(self,i):
         return self.__nomeCampi[i]
+    def _inserisciCategorieBase(self):
+        e,r=self.inserisciCategoria("COMPUTER",1)
+        if e:
+            #print(f"Error inserting role: {r}")
+            return e,r
+        e,r= self.inserisciCategoria("FERRAMENTA",2)
+        if e:
+            #print(f"Error inserting role: {r}")
+            return e,r
+        e,r=self.inserisciCategoria("PANNELLINI SOLARI",3)
+        if e:
+            #print(f"Error inserting role: {r}")
+            return e,r
+        return False,""
     def inserisciCategoria(self, descrizione,PK=None):
         dati={
                 self.__nomeCampi[0]: PK, 

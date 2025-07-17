@@ -34,7 +34,10 @@ class ProdottoNuovo(Prodotto):
         self._root.wait_window(self.__objCategoria.root)
         ival,sval= self.__objCategoria.getSelezionato()
         self.__valCategoria["ival"].set(ival)
-        self.__valCategoria["sval"].set(sval)
+        if ival==-1:
+            self.__valCategoria["sval"].set(self.__dummy)
+        else:
+            self.__valCategoria["sval"].set(sval)
     def __init__(self):
     #def run(self):
         w="400"
@@ -102,7 +105,8 @@ class ProdottoModifica(Prodotto):
     def __init__(self):
         pass
 
-
+'''
 if gfr.SVILUPPO:
     p=ProdottoNuovo()
     p._root.mainloop()
+'''
