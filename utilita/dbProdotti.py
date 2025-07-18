@@ -6,7 +6,9 @@ class DB_prodotti(db.DB):
     def __init__(self):
         super().__init__(gb.gdbms)
         self.__nomeTB = "tbProdotti"
-        self.__nomeCampi = ["idProdotto", "cb","sigla","timestamp","fkCategoria","fkUtente","quantita","um"]
+        self.__nomeCampi = [
+            "idProdotto", "cb","sigla","timestamp",
+            "fkCategoria","fkUtente","quantita","um","stato"]
         self.__campi = {
             self.__nomeCampi[0]:"int(11) NOT NULL AUTO_INCREMENT", 
             self.__nomeCampi[1]:"char(15) unique default '000000000000000'",
@@ -16,6 +18,7 @@ class DB_prodotti(db.DB):
             self.__nomeCampi[5]:"int(11) not null",
             self.__nomeCampi[6]:"float not null",
             self.__nomeCampi[7]:"varchar(5)  not null",
+            self.__nomeCampi[8]:"varchar(15)  not null",
         }
     def getNomeTB(self):
         return self.__nomeTB
@@ -31,10 +34,21 @@ class DB_prodotti(db.DB):
             #print(f"risultato cb={r}")
         except:
             return True,r
-    def inserisciCategoria(self, descrizione,PK=None):
+    def inserisciProdotto(self, 
+                        codiceBarre, sigla, 
+                        fkCategoria,fkUtente,quantita,
+                        unitaMisura,stato,
+                        PK=None,timestamp=None):
         dati={
                 self.__nomeCampi[0]: PK, 
-                self.__nomeCampi[1]: descrizione
+                self.__nomeCampi[1]: codiceBarre,
+                self.__nomeCampi[2]: sigla,
+                self.__nomeCampi[3]: timestamp,
+                self.__nomeCampi[4]: fkCategoria,
+                self.__nomeCampi[5]: fkUtente,
+                self.__nomeCampi[6]: quantita,
+                self.__nomeCampi[7]: unitaMisura,
+                self.__nomeCampi[8]: stato
             }
         q = self._creaInsertInto(self.__nomeTB,dati)
         return self._executeDDL(q)

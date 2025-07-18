@@ -119,7 +119,7 @@ class DB:
         valori = f"VALUES ("
         on_dup = f"ON DUPLICATE KEY UPDATE "
         for ch in dati:
-            if dati is not None:
+            if dati[ch] is not None:
                 ins_to += f"`{ch}`, "
                 valori += self.__formataValore(dati[ch]) + ", "
                 on_dup += f"`{ch}`={self.__formataValore(dati[ch])}, "

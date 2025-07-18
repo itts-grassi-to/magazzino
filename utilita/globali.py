@@ -15,9 +15,21 @@ if SVILUPPO:
 else:
     gdbms = {}
     logato={}
+stato={
+    "DISPONIBILE":1,
+    "NON DISPONIBILE":2,
+    "EVASO":3
+}
 ruoli = {
             "AMMINISTRATORE": 1,
             "OPERATORE": 100,
             "VISUALIZZATORE": 1000
         }
-
+def is_number(s):
+    s=s.replace(",",".")
+    try:
+        float(s)  # Tenta di convertire in float
+        return True
+    except ValueError:
+        return False
+#is_number("7,5")

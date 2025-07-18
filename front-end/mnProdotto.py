@@ -24,11 +24,36 @@ class ProdottoNuovo(Prodotto):
         self.__objCB.set(self.__valCB.get())
         self.__objCB.genera_code128()
     def __on_click_salva(self):
-        if self.__valSigla.get()=="":
+        tsigla=self.__valSigla.get()
+        if tsigla=="":
             msg.showerror("Controllo campo","Non hai inserito la sigla del prodotto",parent=self._root)
             return
-        if self.__valCategoria.get()==self.__dummy:
-            self.__showerror("Controllo campo","Non hai inserito il tipo del prodotto",parent=self._root)
+        if self.__valCategoria["sval"].get()==self.__dummy:
+            msg.showerror("Controllo campo","Non hai inserito il tipo del prodotto",parent=self._root)
+            return
+        tquantita=self.__valQuantita.get()
+        if tquantita=="":
+            msg.showerror("Controllo campo","Non hai inserito la quantità",parent=self._root)
+            return
+        if not gb.is_number(tquantita):
+            msg.showerror("Controllo campo","Non hai inserito la quantità",parent=self._root)
+            return        
+        tum=self.__valUM.get()
+        if tum==self.__dummyUM or tum=="":
+            msg.showerror("Controllo campo","Non hai inserito l'unità di misura",parent=self._root)
+            return
+        obj=dbp.DB_prodotti()
+        e,mess=obj.inserisciProdotto(
+                        self.__valCB.get(), tsigla, 
+                        self.__valCategoria["ival"].get(),
+                        gb.logato["ID"],tquantita,
+                        tum,gb.stato[self.__cmbStato.get()],
+                        PK=None,timestamp=None)
+        if e:
+            msg.showerror("Errore inserimento",mess)
+            return
+        msg.showinfo("Inserimento riuscito",f"Il prodotto {tsigla} è stato inserito con successo")
+        self._root.destroy()
     def __on_click_esci(self):
         pass
     def __on_click_categoria(self,event):
@@ -115,6 +140,16 @@ class ProdottoNuovo(Prodotto):
         txtUM = tk.Entry(self.__fr1,width=15,textvariable=self.__valUM, justify=tk.CENTER)
         txtUM.grid(column=1,row=4,columnspan=3,pady=5)
         txtUM.bind("<Button-1>", self.__on_click_UM)
+        #************************************************************************************************ disponibilità
+        lblStato = tk.Label(self.__fr1,text="Stato")
+        lblStato.grid(column=0,row=5,padx=5,pady=5,sticky="E")
+        #***********
+        opt=[]
+        for ch in gb.stato:
+            opt.append(ch)
+        self.__cmbStato = ttk.Combobox(self.__fr1, values=opt,state="readonly")
+        self.__cmbStato.set("DISPONIBILE")
+        self.__cmbStato.grid(column=1,row=5,padx=5,pady=5,sticky="W")
         #******************************************************************************* pulsantiera
         btSalva = tk.Button(self.__fr2,text="Salva",command=self.__on_click_salva)
         btSalva.grid(column=0,row=0,padx=5,pady=5)
