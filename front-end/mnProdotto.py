@@ -50,9 +50,9 @@ class ProdottoNuovo(Prodotto):
                         tum,gb.stato[self.__cmbStato.get()],
                         PK=None,timestamp=None)
         if e:
-            msg.showerror("Errore inserimento",mess)
+            msg.showerror("Errore inserimento",mess,parent=self._root)
             return
-        msg.showinfo("Inserimento riuscito",f"Il prodotto {tsigla} è stato inserito con successo")
+        msg.showinfo("Inserimento riuscito",f"Il prodotto {tsigla} è stato inserito con successo",parent=self._root)
         self._root.destroy()
     def __on_click_esci(self):
         pass
@@ -100,7 +100,7 @@ class ProdottoNuovo(Prodotto):
         #*********************************************
         errore,txt=self.__getNuovoCB()
         if errore:
-            msg.showerror("Errore DBMS",txt)
+            msg.showerror("Errore DBMS",txt,parent=self._root)
             self._root.destroy()
         self.__valCB = tk.StringVar()
         self.__valCB.set(txt)
@@ -167,9 +167,46 @@ class ProdottoNuovo(Prodotto):
        
 class ProdottoModifica(Prodotto):
     def __init__(self):
-        pass
+        self.__frFiltro=tk.Frame(self._root)
+        self._frVisualizza=tk.Frame(self._root)
+        
+    def visualizza(self,cb=None):
+        #******************************************************* Treeview prodotti
+        objProdotto=dbp.DB_prodotti()
+        style = ttk.Style(self._root)
+        style.configure("rosso.Treeview", 
+                        background="red", foreground="white")
+
+
+        self.__treeCategorie = ttk.Treeview(
+            self._root, 
+            columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8"), 
+            show="headings",
+            height=10,
+            selectmode="browse"
+        )
+        self.__treeCategorie.heading("col1", text="ID")
+        self.__treeCategorie.heading("col2", text="DESCRIZIONE")
+        self.__treeCategorie.column("col1", width=40)
+        self.__treeCategorie.column("col2", width=300)
+        e,self.__valCategorie=self.__obyCategorie.getCategorie()
+        if e:
+            msg.showerror("Categorie","Errore nella lettura delle categorie.\nContattare l'amministratore")
+        i=0
+        while i<len(self.__valCategorie):
+            self.__treeCategorie.insert("","end",
+                values=(
+                    self.__valCategorie[i][self.__obyCategorie.getCampo(0)],
+                    self.__valCategorie[i][self.__obyCategorie.getCampo(1)]
+                )
+            )
+            i+=1
+        scrollbar_y = ttk.Scrollbar(self.root, orient="vertical", command=self.__treeCategorie.yview)
+        self.__treeCategorie.configure(yscrollcommand=scrollbar_y.set)
+        self.__treeCategorie.grid(column=0,row=1,columnspan=2,padx=5,pady=5)
+        scrollbar_y.grid(column=2,row=1,padx=0,pady=5,sticky="NS")
 
 
 if gfr.SVILUPPO:
-    p=ProdottoNuovo()
+    p=ProdottoModifica()
     p._root.mainloop()

@@ -1,4 +1,4 @@
-SVILUPPO = True
+SVILUPPO = False
 if SVILUPPO:
     import pickle
     try:

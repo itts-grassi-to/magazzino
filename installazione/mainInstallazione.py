@@ -230,7 +230,7 @@ class Main():
 
         gb.gdbms={
             "host": self.valIndirizzo.get(),
-            "nome_schema": "magazzino",
+            "nome_schema": "inventario",
             "user": self.valUser.get(),
             "password": self.valPassword.get(),
             "dir": self.__valSelDir.get(),

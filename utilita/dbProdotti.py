@@ -12,7 +12,7 @@ class DB_prodotti(db.DB):
         self.__campi = {
             self.__nomeCampi[0]:"int(11) NOT NULL AUTO_INCREMENT", 
             self.__nomeCampi[1]:"char(15) unique default '000000000000000'",
-            self.__nomeCampi[2]:"varchar(40) not NULL",
+            self.__nomeCampi[2]:"varchar(40) not NULL unique",
             self.__nomeCampi[3]:"timestamp NULL DEFAULT current_timestamp()",
             self.__nomeCampi[4]:"int(11) not null",
             self.__nomeCampi[5]:"int(11) not null",
@@ -26,6 +26,8 @@ class DB_prodotti(db.DB):
         return self.__nomeCampi[0]
     def getCampo(self,i):
         return self.__nomeCampi[i]
+    def getNumeroCampi(self):
+        return len(self.__nomeCampi)
     def getMaxCB(self):
         try:
             q=F"SELECT max({self.__nomeCampi[1]}) as cbmax FROM {self.__nomeTB}"
