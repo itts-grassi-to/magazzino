@@ -167,44 +167,72 @@ class ProdottoNuovo(Prodotto):
        
 class ProdottoModifica(Prodotto):
     def __init__(self):
+        w="900"
+        h="300"
+        ini = {"id":"VISUALIZZA","titolo":f"Visualizza prodotto. ","dimensioni":w+"x"+h}
+        super().__init__(ini)
         self.__frFiltro=tk.Frame(self._root)
         self._frVisualizza=tk.Frame(self._root)
+        self._frVisualizza.grid(column=0,row=2,padx=10)
+        self.__visualizza()
         
-    def visualizza(self,cb=None):
+    def __visualizza(self,cb=None):
         #******************************************************* Treeview prodotti
-        objProdotto=dbp.DB_prodotti()
+        self.__objProdotto=dbp.DB_prodotti()
         style = ttk.Style(self._root)
         style.configure("rosso.Treeview", 
                         background="red", foreground="white")
-
-
-        self.__treeCategorie = ttk.Treeview(
-            self._root, 
-            columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8"), 
+        self.__treeProdotti = ttk.Treeview(
+            self._frVisualizza, 
+            #columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8"), 
+            columns=(
+                "colCB","colSigla","colData","colCategoria","colUtente",
+                "colQuantita","colUM","colStato"
+            ),
             show="headings",
             height=10,
             selectmode="browse"
         )
-        self.__treeCategorie.heading("col1", text="ID")
-        self.__treeCategorie.heading("col2", text="DESCRIZIONE")
-        self.__treeCategorie.column("col1", width=40)
-        self.__treeCategorie.column("col2", width=300)
-        e,self.__valCategorie=self.__obyCategorie.getCategorie()
+        self.__treeProdotti.heading("colCB", text="CODICE A BARRE")
+        self.__treeProdotti.column("colCB", width=150)
+        self.__treeProdotti.heading("colSigla", text="SIGLA")
+        self.__treeProdotti.column("colSigla", width=120)
+        self.__treeProdotti.heading("colData", text="DATA")
+        self.__treeProdotti.column("colData", width=100)
+        self.__treeProdotti.heading("colCategoria", text="CATEGORIA")
+        self.__treeProdotti.column("colCategoria", width=120)
+        self.__treeProdotti.heading("colUtente", text="UTENTE")
+        self.__treeProdotti.column("colUtente", width=80)
+        self.__treeProdotti.heading("colQuantita", text="QUANTITÀ")
+        self.__treeProdotti.column("colQuantita", width=100)
+        self.__treeProdotti.heading("colUM", text="UM")
+        self.__treeProdotti.column("colUM", width=80)
+        self.__treeProdotti.heading("colStato", text="STATO")
+        self.__treeProdotti.column("colStato", width=80)
+        
+        e,self.__valProdotti=self.__objProdotto.getProdotti()
         if e:
             msg.showerror("Categorie","Errore nella lettura delle categorie.\nContattare l'amministratore")
         i=0
-        while i<len(self.__valCategorie):
-            self.__treeCategorie.insert("","end",
+        while i<len(self.__valProdotti):
+            d=str(self.__valProdotti[i][self.__objProdotto.getCampo(3)])
+            self.__treeProdotti.insert("","end", 
                 values=(
-                    self.__valCategorie[i][self.__obyCategorie.getCampo(0)],
-                    self.__valCategorie[i][self.__obyCategorie.getCampo(1)]
+                    self.__valProdotti[i][self.__objProdotto.getCampo(1)],
+                    self.__valProdotti[i][self.__objProdotto.getCampo(2)],
+                    d[8:10]+"-"+d[5:7]+d[0:4],
+                    self.__valProdotti[i][self.__objProdotto.getCampo(4)],
+                    self.__valProdotti[i][self.__objProdotto.getCampo(5)],
+                    self.__valProdotti[i][self.__objProdotto.getCampo(6)],
+                    self.__valProdotti[i][self.__objProdotto.getCampo(7)],
+                    self.__valProdotti[i][self.__objProdotto.getCampo(8)],
                 )
             )
             i+=1
-        scrollbar_y = ttk.Scrollbar(self.root, orient="vertical", command=self.__treeCategorie.yview)
-        self.__treeCategorie.configure(yscrollcommand=scrollbar_y.set)
-        self.__treeCategorie.grid(column=0,row=1,columnspan=2,padx=5,pady=5)
-        scrollbar_y.grid(column=2,row=1,padx=0,pady=5,sticky="NS")
+        scrollbar_y = ttk.Scrollbar(self._frVisualizza, orient="vertical", command=self.__treeProdotti.yview)
+        self.__treeProdotti.configure(yscrollcommand=scrollbar_y.set)
+        self.__treeProdotti.grid(column=0,row=0,columnspan=2,padx=5,pady=5)
+        scrollbar_y.grid(column=3,row=0,padx=0,pady=5,sticky="NS")
 
 
 if gfr.SVILUPPO:

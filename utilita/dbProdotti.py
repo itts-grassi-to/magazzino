@@ -36,6 +36,10 @@ class DB_prodotti(db.DB):
             #print(f"risultato cb={r}")
         except:
             return True,r
+    def getProdotti(self):
+        q = f"SELECT * FROM {self.__nomeTB} "
+        q+= f" ORDER BY {self.__nomeCampi[1]}"
+        return self._executeDML(q)    
     def inserisciProdotto(self, 
                         codiceBarre, sigla, 
                         fkCategoria,fkUtente,quantita,
