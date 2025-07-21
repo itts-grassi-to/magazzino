@@ -139,14 +139,17 @@ class Main():
             #self.__root.quit()
     def on_click_crea_configurazione(self):
         self.__creaConfigurazione()
+    def on_click_selschema(self):
+        if not self.__possoProseguire():
+            return False
     def __init__(self):
         super().__init__()
-        w=750
+        w=850
         h=450
         self.__root=root=tk.Tk()
         root.geometry(str(w)+"x"+str(h))
         root.title("Installazione database Magazzino")
-        root.resizable(False, True) 
+        root.resizable(False, False) 
         #root.iconbitmap(os.path.join(project_root, 'img', 'favicon-16x16.png'))
         root.grid()
         #*************************************************************************** DATA BASE
@@ -176,12 +179,18 @@ class Main():
         self.valPassword.set( "ortu" if gb.SVILUPPO  else "")
         txtPassword=tk.Entry(frDB,textvariable=self.valPassword,justify="center",width=20,show='*')
         txtPassword.grid(column=7,row=0,pady=5,sticky="W")
+        #************************************************** schemi disponibili
+        self.__valSelSchema=[]
+        cmbSelSchema=ttk.Combobox(frDB,textvariable=self.__valSelSchema, state="readonly")
+        cmbSelSchema.grid(column=0,row=1,columnspan=3,pady=10,padx=20,sticky="WE")
+        btSchema=tk.Button(frDB,text="Carica schemi",command=self.on_click_selschema)
+        btSchema.grid(column=3,row=1,pady=10,padx=2,sticky="W")
         #************************************************** seleziona directory
         self.txtDir="Clicca qua per selezionare la directory d'installazione"
         self.__valSelDir=tk.StringVar()
         self.__valSelDir.set(self.txtDir)
         txtSelDir=tk.Entry(frDB,textvariable=self.__valSelDir, state="readonly")
-        txtSelDir.grid(column=0,row=1,columnspan=8,pady=10,padx=20,sticky="WE")
+        txtSelDir.grid(column=0,row=2,columnspan=8,pady=10,padx=20,sticky="WE")
         txtSelDir.bind("<Button-1>", self.on_click_seldir)
         #************************************************** progress bar
         # Creazione del widget Progressbar in modalità 'indeterminate'
@@ -193,8 +202,8 @@ class Main():
         )
         self.__progressbar['value'] = 0 # Imposta il progresso al 50%
         self.__progressbar['maximum'] = 100 # Imposta il massimo a 100
-        self.__progressbar.grid(row=2,column=0,padx=5,pady=10,sticky='EW')
-
+        self.__progressbar.grid(row=3,column=0,padx=5,pady=10,sticky='EW')
+        #************************************************** pulsanti
         self.__ps=tk.Frame(root,padx=5,pady=5)
         self.__ps.grid(row=1,column=0)
         self.__ps.grid_columnconfigure(0, weight=1)
