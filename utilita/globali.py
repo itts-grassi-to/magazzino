@@ -1,4 +1,4 @@
-SVILUPPO = False
+SVILUPPO = True
 if SVILUPPO:
     import pickle
     try:
@@ -11,7 +11,7 @@ if SVILUPPO:
             "RUOLO" : 100
         }
     except FileNotFoundError:
-       print("Configurazione fallita in sviluppo")
+       print("Apertura file di configurazione Configurazione fallita in sviluppo")
 else:
     gdbms = {}
     logato={}

@@ -29,25 +29,6 @@ class DB:
             #print(f"Error while connecting to MySQL: {e}")
             self.connection = None
             return f"Error while connecting to MySQL: {e}"
-    '''
-    def __connecto(self):
-        #print(f"Connecting to database: {self.db_name}")
-        try:
-            self.connection = mysql.connector.connect(
-                host=self.__host,
-                database=self.db_name,
-                user=self.__user,
-                password=self.__psw
-            )
-            if self.connection.is_connected():
-                self.__cursor = self.connection.cursor()
-                #print("Connection successful")
-                return "Connection successful"
-        except Error as e:
-            #print(f"Error while connecting to MySQL: {e}")
-            self.connection = None
-            return f"Error while connecting to MySQL: {e}"
-    '''
     def __disconnect(self):
         #print(f"Disconnecting from database: {self.db_name}")
         if self.connection.is_connected():
@@ -133,12 +114,11 @@ class DB:
                 FOREIGN KEY (`{nomeFK}`) \
                     REFERENCES `{nomeTB_FK}` (`{nomePK_FK}`) ON DELETE NO ACTION ON UPDATE NO ACTION"
     def getSchemi(self):
-        return self.__connect()
-        if r==none:
-            print("Connection failed")
-        else:
-            print("Connection successful")
-            self.__.disconnect()         
+        q="show databases; "
+        e, r = self._executeDML(q)
+        if e:
+            return e, r,[]
+        return False,"",r
     
 #***********************************DB_ruoli
 

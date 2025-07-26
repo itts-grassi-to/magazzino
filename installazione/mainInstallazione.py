@@ -2,6 +2,7 @@
 # creato by Daniele Ortu
 # daniele.ortu@itisgrassi.edu.it
 
+import mysql.connector as mariadb
 import sys
 import os
 
@@ -43,6 +44,34 @@ import pickle
 import hashlib
 
 class Main():
+    def on_click_connetti(self):
+        p={
+            "host": self.valIndirizzo.get(),
+            "nome_schema":None,
+            "user": self.valUser.get(),
+            "password": self.valPassword.get(),
+            "dir": None,
+            "nome_FC":None
+        }
+        obj = db.DB(p)
+        e,msg,r = obj.getSchemi()
+        if e:  
+            messagebox.showerror("WEEE",msg)
+            return
+        opts=[]
+        for opt in r:
+            if opt["Database"]!="information_schema" and opt["Database"]!="mysql" and opt["Database"]!="performance_schema" and opt["Database"]!="sys":
+                opts.append(opt["Database"])
+        if not opts:
+            messagebox.showerror("WEEE","Nessuno schema trovato\nRivolgiti all'amministratore del database per crearne uno")
+            return
+        messagebox.showinfo("Schemi trovati", "Selezionana uno schema dalla combobox")
+        self.__valSelSchema.clear()
+        self.__valSelSchema.extend(opts)
+        self.__cmbSelSchema['values'] = self.__valSelSchema
+        self.__cmbSelSchema['state'] = "readonly"
+        self.__btAvvia['state'] = tk.NORMAL
+        self.__btConf['state'] = tk.NORMAL
     def on_click_seldir(self,event):
         directory_selezionata = filedialog.askdirectory()
         if directory_selezionata:
@@ -69,6 +98,7 @@ class Main():
                 self.__msgTxt(msg)
                 return            
             #************************************************************************************** tabella utenti
+            #input("attendo invio")
             self.__msgTxt("Creo tabella utenti")
             obj=dbu.DB_utenti()
             e,msg = obj._creaTabellaUtenti()
@@ -139,13 +169,10 @@ class Main():
             #self.__root.quit()
     def on_click_crea_configurazione(self):
         self.__creaConfigurazione()
-    def on_click_selschema(self):
-        if not self.__possoProseguire():
-            return False
     def __init__(self):
         super().__init__()
-        w=850
-        h=450
+        w=950
+        h=490
         self.__root=root=tk.Tk()
         root.geometry(str(w)+"x"+str(h))
         root.title("Installazione database Magazzino")
@@ -167,11 +194,11 @@ class Main():
         #lbs.grid(column=2,row=0,padx=10)
         #************************************************** user
         lbUser=tk.Label(frDB,text="    User")
-        lbUser.grid(column=3,row=0,padx=2,pady=5,sticky="E")
+        lbUser.grid(column=2,row=0,padx=2,pady=5,sticky="E")
         self.valUser=tk.StringVar()
         self.valUser.set( "dortu" if gb.SVILUPPO  else "")
         txtUser=tk.Entry(frDB,textvariable=self.valUser,justify="center",width=20)
-        txtUser.grid(column=4,row=0,pady=5,sticky="W")
+        txtUser.grid(column=3,row=0,pady=5,sticky="W")
         #************************************************** Password
         lbPassword=tk.Label(frDB,text="    Password")
         lbPassword.grid(column=6,row=0,padx=1,pady=5,sticky="E")
@@ -179,19 +206,23 @@ class Main():
         self.valPassword.set( "ortu" if gb.SVILUPPO  else "")
         txtPassword=tk.Entry(frDB,textvariable=self.valPassword,justify="center",width=20,show='*')
         txtPassword.grid(column=7,row=0,pady=5,sticky="W")
+        #************************************************** pulsante connessio
+        btConn=tk.Button(frDB,text="Connetti",command=self.on_click_connetti)
+        btConn.grid(row=0,column=8,sticky='EW',padx=5,pady=5)
         #************************************************** schemi disponibili
         self.__valSelSchema=[]
-        cmbSelSchema=ttk.Combobox(frDB,textvariable=self.__valSelSchema, state="readonly")
-        cmbSelSchema.grid(column=0,row=1,columnspan=3,pady=10,padx=20,sticky="WE")
-        btSchema=tk.Button(frDB,text="Carica schemi",command=self.on_click_selschema)
-        btSchema.grid(column=3,row=1,pady=10,padx=2,sticky="W")
+        self.__cmbSelSchema=ttk.Combobox(frDB,textvariable=self.__valSelSchema, 
+                                         state="disabled", justify="center", width=35)
+        self.__cmbSelSchema.grid(column=0,row=1,columnspan=2,pady=10,padx=20,sticky="WE")
+        #btSchetk.Button(frDB,text="Carica schemi",command=self.on_click_selschema)
+        #btSchema.grid(column=3,row=1,pady=10,padx=2,sticky="W")
         #************************************************** seleziona directory
         self.txtDir="Clicca qua per selezionare la directory d'installazione"
         self.__valSelDir=tk.StringVar()
         self.__valSelDir.set(self.txtDir)
-        txtSelDir=tk.Entry(frDB,textvariable=self.__valSelDir, state="readonly")
-        txtSelDir.grid(column=0,row=2,columnspan=8,pady=10,padx=20,sticky="WE")
-        txtSelDir.bind("<Button-1>", self.on_click_seldir)
+        self.__txtSelDir=tk.Entry(frDB,textvariable=self.__valSelDir, state=tk.DISABLED, justify="center", width=50)
+        self.__txtSelDir.grid(column=0,row=2,columnspan=8,pady=10,padx=20,sticky="WE")
+        self.__txtSelDir.bind("<Button-1>", self.on_click_seldir)
         #************************************************** progress bar
         # Creazione del widget Progressbar in modalità 'indeterminate'
         self.__progressbar = ttk.Progressbar(
@@ -210,10 +241,11 @@ class Main():
         self.__ps.grid_rowconfigure(0, weight=1)   
         btEsci=tk.Button(self.__ps,text="Esci",command=root.quit)
         btEsci.grid(row=0,column=0,sticky='EW',padx=5,pady=5)
-        btAvvia=tk.Button(self.__ps,text="Avvia",command=self.__avviaInstallazione)
-        btAvvia.grid(row=0,column=1,sticky='EW',padx=5,pady=5)  
-        btConf=tk.Button(self.__ps,text="Crea file di configurazione",command=self.on_click_crea_configurazione)
-        btConf.grid(row=0,column=2,sticky='EW',padx=5,pady=5)  
+        self.__btAvvia=tk.Button(self.__ps,text="Avvia",command=self.__avviaInstallazione,state=tk.DISABLED)
+        self.__btAvvia.grid(row=0,column=1,sticky='EW',padx=5,pady=5)  
+        self.__btConf=tk.Button(self.__ps,text="Crea file di configurazione",
+                                command=self.on_click_crea_configurazione,state=tk.DISABLED)
+        self.__btConf.grid(row=0,column=2,sticky='EW',padx=5,pady=5)  
 
         self.__txtLog = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=60, height=15,
                                       font=("Arial", 10), bd=2, relief=tk.GROOVE)
@@ -236,23 +268,37 @@ class Main():
     def run(self):
         self.__root.mainloop()    
     def __possoProseguire(self):
-
+        
         gb.gdbms={
             "host": self.valIndirizzo.get(),
-            "nome_schema": "inventario",
+            "nome_schema":self.__cmbSelSchema.get(),
             "user": self.valUser.get(),
             "password": self.valPassword.get(),
             "dir": self.__valSelDir.get(),
             "nome_FC":"config"
         }
+        try:
+                conn = mariadb.connect(
+                    host=gb.gdbms["host"],
+                    user=gb.gdbms["user"],
+                    password=gb.gdbms["password"],
+                    database=gb.gdbms["nome_schema"] 
+                )
+                cursor = conn.cursor()
 
-        obj = db.DB(gb.gdbms)
-        r =obj.connect()
-        if obj.connection==None:
-            messagebox.showerror("WEEE",r)
-            return False
-        if obj.connection.is_connected():
-            obj.connection.close()
+                # Esegui la query per ottenere l'elenco dei database
+                cursor.execute("SHOW DATABASES")
+
+                # Recupera tutti i risultati
+                for (db_name,) in cursor:
+                    self.__valSelSchema.append(db_name)
+        except mariadb.Error as e:
+            messagebox.showerror("WEEE",e)
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
         if self.__valSelDir.get()==self.txtDir:
             messagebox.showerror("WEEE","Inserisci la directori di installazione")
             return False
