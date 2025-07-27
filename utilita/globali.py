@@ -1,20 +1,23 @@
 SVILUPPO = False
 if SVILUPPO:
+    
     import pickle
     try:
         with open('config', 'rb') as f:
             gdbms=loaded_dictionary = pickle.load(f)
-        logato={
-            "ID": 1,
-            "NOME": "Sviluppo",
-            "COGNOME":"",
-            "RUOLO" : 100
-        }
     except FileNotFoundError:
-       print("Configurazione fallita in sviluppo")
+       print("Apertura file di configurazione Configurazione fallita in sviluppo")
+    
+    logato={
+        "ID": 1,
+        "NOME": "Sviluppo",
+        "COGNOME":"",
+        "RUOLO" : 100
+    }
 else:
-    gdbms = {}
     logato={}
+
+gdbms = {}
 stato={
     "DISPONIBILE":1,
     "NON DISPONIBILE":2,

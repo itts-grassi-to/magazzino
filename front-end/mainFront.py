@@ -15,8 +15,9 @@ class Main_front():
         
         self.__wBunner = tk.Frame(self.__root, padx=1, pady=0)
         self.__wBunner.grid(row=0, column=0)
+        txt=f"Sei logato come {gb.logato['NOME'][:self.__whidtBunner]} sullo schema {gb.gdbms['nome_schema']}"
         self.__lblBunner = tk.Label(
-            self.__wBunner, text=f"Sei logato come {gb.logato['NOME'][:self.__whidtBunner]}", font=("Arial", 12,'bold'), bg="#6A0DAD",fg='white',width=self.__whidtBunner,height=1)
+            self.__wBunner, text=txt, font=("Arial", 12,'bold'), bg="#6A0DAD",fg='white',width=self.__whidtBunner,height=1)
         self.__lblBunner.grid(row=0, column=0, padx=5, pady=10, sticky='NSWE' )
 
 

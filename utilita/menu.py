@@ -6,7 +6,8 @@ class Menu:
     def __on_click_prodotto_nuovo(self):
         mnp.ProdottoNuovo()
     def __on_click_prodotto_cerca(self):
-        print("cerca prodotto")
+        #print("cerca prodotto")
+        mnp.ProdottoModifica()
     def __init__(self,parent,ruolo):
         self.__root = parent
         menubar = tk.Menu(self.__root)
