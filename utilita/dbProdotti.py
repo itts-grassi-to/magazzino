@@ -37,7 +37,11 @@ class DB_prodotti(db.DB):
         except:
             return True,r
     def getProdotti(self):
-        q = f"SELECT * FROM {self.__nomeTB} "
+        objCat = dbc.DB_categorie()
+        objUt = dbu.DB_utenti()
+        q = f"SELECT * "
+        q+=f"FROM {self.__nomeTB} inner join {objCat.getNomeTB()} on {self.__nomeCampi[4]}={objCat.getPK()} "
+        q+=f"inner join {objUt.getNomeTB()} on {self.__nomeCampi[5]}={objUt.getPK()}"
         q+= f" ORDER BY {self.__nomeCampi[1]}"
         return self._executeDML(q)    
     def inserisciProdotto(self, 

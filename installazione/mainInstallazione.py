@@ -260,7 +260,9 @@ class Main():
         try:
             with open(file_name, 'wb') as f:
                 pickle.dump(gb.gdbms, f)
-            print(f"Dizionario salvato con successo in '{file_name}'")
+            #print(f"Dizionario salvato con successo in '{file_name}'")
+            self.__msgTxt(f"Configurazione salvata con successo")
+            messagebox.showinfo("Configurazione salvata", f"Configurazione salvata con successo'")
             return True
         except Exception as e:
             print(f"Errore durante il salvataggio: {e}")    

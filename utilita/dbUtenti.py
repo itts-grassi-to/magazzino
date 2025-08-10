@@ -8,7 +8,8 @@ class DB_utenti(db.DB):
     def __init__(self):
         super().__init__(gb.gdbms)
         self.__nomeTB = "tbUtenti"
-        self.__nomeCampi = ["idtbUtenti", "nome", "cognome", "budge", "user", "password", "fkRuolo"]
+        self.__nomeCampi = ["idtbUtenti", "nome", "cognome", 
+                            "budge", "user", "password", "fkRuolo"]
         self.__campi = {
             self.__nomeCampi[0]:"int(11) NOT NULL AUTO_INCREMENT", 
                     self.__nomeCampi[1]: "varchar(100) NOT NULL",\

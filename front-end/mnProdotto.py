@@ -1,12 +1,15 @@
 import sviluppo as gfr
+import globali as gb
 import tkinter as tk
 from tkinter import ttk 
 import tkinter.messagebox as msg
 
 import dbProdotti as dbp
+import dbUtenti as dbu
+import dbCategorie as dbc
 import codice_barre as ucb
 import mnCategoria as mnc
-import globali as gb
+
 class Prodotto:
     def __init__(self,ini):
         if gb.logato["RUOLO"]>gb.ruoli["OPERATORE"]:
@@ -155,7 +158,6 @@ class ProdottoNuovo(Prodotto):
         btSalva.grid(column=0,row=0,padx=5,pady=5)
         btEsci = tk.Button(self.__fr2,text="Esci",command=self.__on_click_esci)
         btEsci.grid(column=1,row=0,padx=5,pady=5)
-
     def __getNuovoCB(self):
 
         errore,self.__cb=self.__objDBP.getMaxCB()
@@ -167,14 +169,17 @@ class ProdottoNuovo(Prodotto):
        
 class ProdottoModifica(Prodotto):
     def __init__(self):
-        w="900"
-        h="300"
+        w="1070"
+        h="500"
         ini = {"id":"VISUALIZZA","titolo":f"Visualizza prodotto. ","dimensioni":w+"x"+h}
         super().__init__(ini)
         self.__frFiltro=tk.Frame(self._root)
+        self.__frFiltro.grid(column=0,row=0,padx=10,pady=10,sticky="NSEW")
+        
+        obiF1=gb.Filtro(self.__frFiltro,0,0)
         self._frVisualizza=tk.Frame(self._root)
         self._frVisualizza.grid(column=0,row=2,padx=10)
-        self.__visualizza()
+        #self.__visualizza()
         
     def __visualizza(self,cb=None):
         #******************************************************* Treeview prodotti
@@ -190,7 +195,7 @@ class ProdottoModifica(Prodotto):
                 "colQuantita","colUM","colStato"
             ),
             show="headings",
-            height=10,
+            height=20,
             selectmode="browse"
         )
         self.__treeProdotti.heading("colCB", text="CODICE A BARRE")
@@ -202,18 +207,21 @@ class ProdottoModifica(Prodotto):
         self.__treeProdotti.heading("colCategoria", text="CATEGORIA")
         self.__treeProdotti.column("colCategoria", width=120)
         self.__treeProdotti.heading("colUtente", text="UTENTE")
-        self.__treeProdotti.column("colUtente", width=80)
+        self.__treeProdotti.column("colUtente", width=200)
         self.__treeProdotti.heading("colQuantita", text="QUANTITÀ")
         self.__treeProdotti.column("colQuantita", width=100)
         self.__treeProdotti.heading("colUM", text="UM")
         self.__treeProdotti.column("colUM", width=80)
         self.__treeProdotti.heading("colStato", text="STATO")
-        self.__treeProdotti.column("colStato", width=80)
+        self.__treeProdotti.column("colStato", width=150)
         
         e,self.__valProdotti=self.__objProdotto.getProdotti()
         if e:
             msg.showerror("Categorie","Errore nella lettura delle categorie.\nContattare l'amministratore")
+            return
         i=0
+        objCat = dbc.DB_categorie()
+        objUt = dbu.DB_utenti()
         while i<len(self.__valProdotti):
             d=str(self.__valProdotti[i][self.__objProdotto.getCampo(3)])
             self.__treeProdotti.insert("","end", 
@@ -221,11 +229,11 @@ class ProdottoModifica(Prodotto):
                     self.__valProdotti[i][self.__objProdotto.getCampo(1)],
                     self.__valProdotti[i][self.__objProdotto.getCampo(2)],
                     d[8:10]+"-"+d[5:7]+d[0:4],
-                    self.__valProdotti[i][self.__objProdotto.getCampo(4)],
-                    self.__valProdotti[i][self.__objProdotto.getCampo(5)],
+                    self.__valProdotti[i][objCat.getCampo(1)],
+                    self.__valProdotti[i][objUt.getCampo(2)] +" "+self.__valProdotti[i][objUt.getCampo(1)],
                     self.__valProdotti[i][self.__objProdotto.getCampo(6)],
                     self.__valProdotti[i][self.__objProdotto.getCampo(7)],
-                    self.__valProdotti[i][self.__objProdotto.getCampo(8)],
+                    gb.getStato(self.__valProdotti[i]["stato"]),
                 )
             )
             i+=1
