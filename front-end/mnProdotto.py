@@ -168,6 +168,14 @@ class ProdottoNuovo(Prodotto):
         return False,self.__cb
        
 class ProdottoModifica(Prodotto):
+    def __on_click_cerca(self):
+        #print(self.__objCB.getStato(),self.__objCB.getTesto())
+        self.__filtro=""
+        if self.__objCB.getStato():   
+            if self.__objCB.getTesto() !="":
+                self.__filtro=f" {self.__objProdotto.getCampo(1)} like '%{self.__objCB.getTesto()}%' "
+            
+        self.__visualizza()
     def __init__(self):
         w="1070"
         h="500"
@@ -176,10 +184,17 @@ class ProdottoModifica(Prodotto):
         self.__frFiltro=tk.Frame(self._root)
         self.__frFiltro.grid(column=0,row=0,padx=10,pady=10,sticky="NSEW")
         
-        obiF1=gb.Filtro(self.__frFiltro,0,0)
+        self.__objCB=gb.Filtro(self.__frFiltro,txt="Codice Barre",col=0,riga=0)
+        self.__objSigla=gb.Filtro(self.__frFiltro,txt="Sigla",col=1,riga=0)
+        self.__objCategoria=gb.Filtro(self.__frFiltro,txt="Categoria",col=2,riga=0)
+        self.__objUtente=gb.Filtro(self.__frFiltro,txt="Utente",col=3,riga=0)
+        self.__objStato=gb.Filtro(self.__frFiltro,txt="Stato",col=4,riga=0)
+        cmdCerca = tk.Button(self.__frFiltro,text="Cerca",command=self.__on_click_cerca)
+        cmdCerca.grid(column=0,row=2,padx=10,pady=10,sticky="W")
         self._frVisualizza=tk.Frame(self._root)
         self._frVisualizza.grid(column=0,row=2,padx=10)
-        #self.__visualizza()
+        self.__filtro=""
+        self.__visualizza()
         
     def __visualizza(self,cb=None):
         #******************************************************* Treeview prodotti
@@ -215,7 +230,8 @@ class ProdottoModifica(Prodotto):
         self.__treeProdotti.heading("colStato", text="STATO")
         self.__treeProdotti.column("colStato", width=150)
         
-        e,self.__valProdotti=self.__objProdotto.getProdotti()
+        
+        e,self.__valProdotti=self.__objProdotto.getProdotti(self.__filtro)
         if e:
             msg.showerror("Categorie","Errore nella lettura delle categorie.\nContattare l'amministratore")
             return

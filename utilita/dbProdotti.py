@@ -36,12 +36,14 @@ class DB_prodotti(db.DB):
             #print(f"risultato cb={r}")
         except:
             return True,r
-    def getProdotti(self):
+    def getProdotti(self,filtro):
         objCat = dbc.DB_categorie()
         objUt = dbu.DB_utenti()
         q = f"SELECT * "
         q+=f"FROM {self.__nomeTB} inner join {objCat.getNomeTB()} on {self.__nomeCampi[4]}={objCat.getPK()} "
         q+=f"inner join {objUt.getNomeTB()} on {self.__nomeCampi[5]}={objUt.getPK()}"
+        if filtro != "":
+            q+=f" WHERE {filtro} "
         q+= f" ORDER BY {self.__nomeCampi[1]}"
         return self._executeDML(q)    
     def inserisciProdotto(self, 
