@@ -1,3 +1,5 @@
+// Rileva in automatico l'IP del server da cui stai visualizzando la pagina
+const API_BASE_URL = `http://${window.location.hostname}:5000`;
 import React, { useState, useEffect } from 'react';
 
 export default function GestioneAsset() {
@@ -8,7 +10,7 @@ export default function GestioneAsset() {
     const [idSelezionato, setIdSelezionato] = useState(null);
     const [sigla, setSigla] = useState('');
     const [descrizione, setDescrizione] = useState('');
-    const urlBase = 'http://localhost:5000/api/asset-manager';
+    const urlBase = `${API_BASE_URL}/api/asset-manager`;
 
     useEffect(() => {
         caricaAssets();
@@ -16,7 +18,7 @@ export default function GestioneAsset() {
 
     const caricaAssets = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/asset-manager');
+            const res = await fetch(`${API_BASE_URL}/api/asset-manager`);
             const data = await res.json();
 
             // 1. Stampiamo nei log del browser cosa risponde ESATTAMENTE il server

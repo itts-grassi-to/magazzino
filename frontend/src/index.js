@@ -1,3 +1,5 @@
+// Rileva in automatico l'IP del server da cui stai visualizzando la pagina
+const API_BASE_URL = `http://${window.location.hostname}:5000`;
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import DashboardPostLogin from './dashboardPostLogin'; // <--- ECCCO L'IMPORT DEL NUOVO FILE!
@@ -13,7 +15,7 @@ function App() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),

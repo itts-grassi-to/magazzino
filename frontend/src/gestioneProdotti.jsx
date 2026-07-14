@@ -1,3 +1,5 @@
+// Rileva in automatico l'IP del server da cui stai visualizzando la pagina
+const API_BASE_URL = `http://${window.location.hostname}:5000`;
 import React, { useState, useEffect } from 'react';
 
 export default function GestioneProdotti({ idUtenteLoggato }) {
@@ -20,7 +22,7 @@ export default function GestioneProdotti({ idUtenteLoggato }) {
 
     const caricaProdotti = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/magazzino/prodotti');
+            const res = await fetch(`${API_BASE_URL}/api/magazzino/prodotti`);
             const data = await res.json();
             setProdotti(data);
         } catch (err) {
@@ -30,7 +32,7 @@ export default function GestioneProdotti({ idUtenteLoggato }) {
 
     const caricaCategorie = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/magazzino/categorie');
+            const res = await fetch(`${API_BASE_URL}/api/magazzino/categorie`);
             const data = await res.json();
             setCategorie(data);
             if (data.length > 0 && !idCategoria) setIdCategoria(data[0].id.toString());
@@ -43,8 +45,8 @@ export default function GestioneProdotti({ idUtenteLoggato }) {
         e.preventDefault();
 
         const url = idSelezionato
-            ? `http://localhost:5000/api/magazzino/prodotti/${idSelezionato}`
-            : 'http://localhost:5000/api/magazzino/prodotti';
+            ? `${API_BASE_URL}/api/magazzino/prodotti/${idSelezionato}`
+            : `${API_BASE_URL}/api/magazzino/prodotti`;
         const method = idSelezionato ? 'PUT' : 'POST';
 
         const corpo = {
@@ -92,7 +94,7 @@ export default function GestioneProdotti({ idUtenteLoggato }) {
         if (!window.confirm("Sei sicuro di voler eliminare questo prodotto?")) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/api/magazzino/prodotti/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/magazzino/prodotti/${id}`, {
                 method: 'DELETE'
             });
             const data = await response.json();

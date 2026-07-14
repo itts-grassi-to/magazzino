@@ -1,3 +1,6 @@
+// Rileva in automatico l'IP del server da cui stai visualizzando la pagina
+const API_BASE_URL = `http://${window.location.hostname}:5000`;
+
 import React, { useState, useEffect } from 'react';
 
 export default function GestioneMovimenti() {
@@ -42,7 +45,7 @@ export default function GestioneMovimenti() {
 
     const caricaProdotti = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/magazzino/prodotti');
+            const res = await fetch(`${API_BASE_URL}/api/magazzino/prodotti`);
             const data = await res.json();
             setProdotti(data);
         } catch (err) {
@@ -52,7 +55,7 @@ export default function GestioneMovimenti() {
 
     const caricaStoccaggi = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/magazzino/stoccaggi');
+            const res = await fetch(`${API_BASE_URL}/api/magazzino/stoccaggi`);
             const data = await res.json();
             setStoccaggi(data);
         } catch (err) {
@@ -62,7 +65,7 @@ export default function GestioneMovimenti() {
 
     const caricaStorico = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/magazzino/storico');
+            const res = await fetch(`${API_BASE_URL}/api/magazzino/storico`);
             const data = await res.json();
             setStorico(data);
         } catch (err) {
@@ -88,7 +91,7 @@ export default function GestioneMovimenti() {
         };
 
         try {
-            const response = await fetch('http://localhost:5000/api/magazzino/registra', {
+            const response = await fetch(`${API_BASE_URL}/api/magazzino/registra`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(corpoRichiesta)

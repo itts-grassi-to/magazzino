@@ -1,3 +1,5 @@
+// Rileva in automatico l'IP del server da cui stai visualizzando la pagina
+const API_BASE_URL = `http://${window.location.hostname}:5000`;
 import React, { useState, useEffect } from 'react';
 
 export default function GestioneTools() {
@@ -18,7 +20,7 @@ export default function GestioneTools() {
 
     const caricaCategorie = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/magazzino/categorie');
+            const res = await fetch(`${API_BASE_URL}/api/magazzino/categorie`);
             const data = await res.json();
             if (Array.isArray(data)) setCategorie(data);
         } catch (err) {
@@ -31,7 +33,7 @@ export default function GestioneTools() {
         setLoading(true);
         try {
             const queryParams = new URLSearchParams({ termine, id_categoria: categoriaSel }).toString();
-            const res = await fetch(`http://localhost:5000/api/tools/scorte?${queryParams}`);
+            const res = await fetch(`${API_BASE_URL}/api/tools/scorte?${queryParams}`);
             const data = await res.json();
             if (Array.isArray(data)) setRisultati(data);
         } catch (err) {
@@ -45,7 +47,7 @@ export default function GestioneTools() {
         setTermine('');
         setCategoriaSel('');
         setTimeout(() => {
-            fetch(`http://localhost:5000/api/tools/scorte`).then(r => r.json()).then(d => setRisultati(d));
+            fetch(`${API_BASE_URL}/api/tools/scorte`).then(r => r.json()).then(d => setRisultati(d));
         }, 50);
     };
 

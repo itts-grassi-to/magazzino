@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+
+// Rileva in automatico l'IP del server da cui stai visualizzando la pagina
+const API_BASE_URL = `http://${window.location.hostname}:5000`; import React, { useState, useEffect } from 'react';
 
 export default function GestioneUtenti() {
     const [utenti, setUtenti] = useState([]);
@@ -14,7 +16,7 @@ export default function GestioneUtenti() {
     const caricaUtenti = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/utenti', {
+            const response = await fetch(`${API_BASE_URL}/api/utenti`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -35,8 +37,8 @@ export default function GestioneUtenti() {
 
         // Se c'è un idSelezionato facciamo MODIFICA (PUT), altrimenti NUOVO (POST)
         const url = idSelezionato
-            ? `http://localhost:5000/api/utenti/${idSelezionato}`
-            : 'http://localhost:5000/api/utenti';
+            ? `${API_BASE_URL}/api/utenti/${idSelezionato}`
+            : `${API_BASE_URL}/api/utenti`;
         const method = idSelezionato ? 'PUT' : 'POST';
 
         try {
@@ -67,7 +69,7 @@ export default function GestioneUtenti() {
 
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`http://localhost:5000/api/utenti/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/utenti/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
