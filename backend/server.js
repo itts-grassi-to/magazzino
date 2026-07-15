@@ -14,6 +14,22 @@ const pool = new Pool({
 });
 
 async function initDatabase() {
+    let retries = 5;
+    while (retries) {
+        try {
+            await pool.query('SELECT 1');
+            console.log("🔌 Connessione al database stabilita con successo!");
+            break; // Se ha successo, esce dal ciclo di retry
+        } catch (err) {
+            console.log(`⚠️ Database non ancora pronto... Riprovo tra 3 secondi. Tentativi rimasti: ${retries - 1}`);
+            retries -= 1;
+            await new Promise(res => setTimeout(res, 3000)); // Aspetta 3 secondi
+        }
+    }
+
+    if (retries === 0) {
+        throw new Error("❌ Impossibile connettersi al Database dopo diversi tentativi.");
+    }
     try {
         await pool.query(`
             CREATE TABLE IF NOT EXISTS ruoli (
@@ -74,6 +90,7 @@ async function initDatabase() {
                 codice_a_barre VARCHAR(100) UNIQUE,
                 id_categoria INTEGER REFERENCES categoria(id) ON DELETE SET NULL,
                 id_utente_creatore INTEGER REFERENCES utenti(id),
+                data_scadenza DATE DEFAULT NULL,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);

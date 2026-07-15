@@ -110,10 +110,18 @@ router.post('/prodotti', async (req, res) => {
                 data_scadenza || null
             ]
         );
-        return res.status(201).json({ message: 'Nuovo prodotto registrato nell\'anagrafica!' }); res.status(201).json({ message: 'Nuovo prodotto registrato nell anagrafica!' });
+        return
+        res.status(201).json(
+            { message: 'Nuovo prodotto registrato nell\'anagrafica!' }
+        );
+        //res.status(201).json({ message: 'Nuovo prodotto registrato nell anagrafica!' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Errore durante la creazione del prodotto (verifica che la sigla sia univoca)' });
+        return res.status(500).json(
+            {
+                message: 'Errore durante la creazione \
+                del prodotto ' }
+        );
     }
 });
 router.put('/prodotti/:id', async (req, res) => {
